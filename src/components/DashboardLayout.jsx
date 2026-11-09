@@ -1,8 +1,10 @@
+
 import SearchBar from './SearchBar';
 import SearchHistory from './SearchHistory';
 import StatsPanel from './StatsPanel';
 import PlayerTable from './PlayerTable';
 import '../styles/dashboard.css';
+import '../styles/pagination-preview.css';
 
 function DashboardLayout({
   searchValue,
@@ -17,7 +19,10 @@ function DashboardLayout({
   selectedPlayerId,
   onPlayerSelect,
   sortConfig,
-  onSort
+  onSort,
+  pagination,
+  onPageChange,
+  onItemsPerPageChange
 }) {
   return (
     <div className="dashboard">
@@ -80,6 +85,76 @@ function DashboardLayout({
             sortConfig={sortConfig}
             onSort={onSort}
           />
+
+          <div className="pagination-preview">
+            <div className="pagination-preview__settings">
+              <label
+                className="pagination-preview__label"
+                htmlFor="items-per-page"
+              >
+                Jugadores por página:
+              </label>
+
+              <select
+                id="items-per-page"
+                className="pagination-preview__select"
+                value={pagination.itemsPerPage}
+                onChange={(event) => {
+                  onItemsPerPageChange(event.target.value);
+                }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
+
+            <p
+              className="pagination-preview__summary"
+              role="status"
+            >
+              Mostrando {pagination.rangeStart}–
+              {pagination.rangeEnd} de {pagination.totalItems}
+            </p>
+
+            <nav
+              className="pagination-preview__navigation"
+              aria-label="Navegación entre páginas"
+            >
+              <button
+                className="pagination-preview__button"
+                type="button"
+                onClick={() => onPageChange(
+                  pagination.currentPage - 1
+                )}
+                disabled={pagination.currentPage <= 1}
+              >
+                Anterior
+              </button>
+
+              <span className="pagination-preview__page">
+                Página {pagination.totalPages === 0
+                  ? 0
+                  : pagination.currentPage}
+                {' de '}
+                {pagination.totalPages}
+              </span>
+
+              <button
+                className="pagination-preview__button"
+                type="button"
+                onClick={() => onPageChange(
+                  pagination.currentPage + 1
+                )}
+                disabled={
+                  pagination.totalPages === 0 ||
+                  pagination.currentPage >= pagination.totalPages
+                }
+              >
+                Siguiente
+              </button>
+            </nav>
+          </div>
         </section>
       </main>
     </div>

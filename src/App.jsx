@@ -1,9 +1,13 @@
+
 import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
 import { players } from './data/players';
 
 // Clave del historial de búsquedas
 const HISTORY_KEY = 'top-club-soccer-search-history';
+
+// Cantidades permitidas por página
+const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
 // Posiciones disponibles
 const POSITIONS = [
@@ -64,6 +68,10 @@ function App() {
     direction: 'none'
   });
 
+  // Estados de paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
   // Debounce de 300 milisegundos
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -75,7 +83,7 @@ function App() {
     };
   }, [searchValue]);
 
-  // Filtrar jugadores exclusivamente por nombre
+  // Filtrar jugadores por nombre
   const filteredPlayers = useMemo(() => {
     const normalizedSearch = debouncedSearch
       .trim()
@@ -89,7 +97,7 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Calcular estadísticas y distribución por posición
+  // Estadísticas y distribución por posición
   const stats = useMemo(() => {
     const totalPlayers = filteredPlayers.length;
 
@@ -159,15 +167,12 @@ function App() {
   const sortedPlayers = useMemo(() => {
     const { key, direction } = sortConfig;
 
-    // Restaurar el orden original si no hay ordenamiento
     if (key === null || direction === 'none') {
       return filteredPlayers;
     }
 
-    // Determinar la dirección del ordenamiento
     const multiplier = direction === 'asc' ? 1 : -1;
 
-    // Incorporar índice original para orden estable
     const indexedPlayers = filteredPlayers.map(
       (player, index) => ({
         player,
@@ -181,14 +186,12 @@ function App() {
 
       let comparison = 0;
 
-      // Comparar correctamente los valores numéricos
       if (
         typeof firstValue === 'number' &&
         typeof secondValue === 'number'
       ) {
         comparison = firstValue - secondValue;
       } else {
-        // Comparar textos respetando el idioma español
         comparison = String(firstValue).localeCompare(
           String(secondValue),
           'es',
@@ -196,7 +199,6 @@ function App() {
         );
       }
 
-      // Mantener el orden original en caso de empate
       if (comparison === 0) {
         return first.originalIndex - second.originalIndex;
       }
@@ -207,10 +209,94 @@ function App() {
     return indexedPlayers.map(({ player }) => player);
   }, [filteredPlayers, sortConfig]);
 
-  // Cambiar el ordenamiento al seleccionar una columna
+  // Total de resultados después de aplicar filtros
+  const totalItems = sortedPlayers.length;
+
+  // Calcular el número de páginas
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  // Mantener siempre una página válida
+  const safeCurrentPage = Math.min(
+    Math.max(1, currentPage),
+    Math.max(1, totalPages)
+  );
+
+  // Índice del primer jugador de la página
+  const startIndex = (safeCurrentPage - 1) * itemsPerPage;
+
+  // Obtener los jugadores visibles
+  const paginatedPlayers = useMemo(() => {
+    return sortedPlayers.slice(
+      startIndex,
+      startIndex + itemsPerPage
+    );
+  }, [sortedPlayers, startIndex, itemsPerPage]);
+
+  // Calcular el rango visible
+  const rangeStart = totalItems === 0
+    ? 0
+    : startIndex + 1;
+
+  const rangeEnd = totalItems === 0
+    ? 0
+    : Math.min(startIndex + itemsPerPage, totalItems);
+
+  // Información utilizada por la paginación
+  const pagination = {
+    currentPage: safeCurrentPage,
+    totalPages,
+    itemsPerPage,
+    totalItems,
+    rangeStart,
+    rangeEnd
+  };
+
+  // Cambiar la página actual
+  const handlePageChange = (page) => {
+    const validPage = Math.min(
+      Math.max(1, Number(page)),
+      Math.max(1, totalPages)
+    );
+
+    if (Number.isFinite(validPage)) {
+      setCurrentPage(validPage);
+    }
+  };
+
+  // Cambiar la cantidad de jugadores por página
+  const handleItemsPerPageChange = (value) => {
+    const newSize = Number(value);
+
+    if (!PAGE_SIZE_OPTIONS.includes(newSize)) {
+      return;
+    }
+
+    setItemsPerPage(newSize);
+    setCurrentPage(1);
+  };
+
+  // Modificar la búsqueda
+  const handleSearchChange = (value) => {
+    setSearchValue(value);
+    setCurrentPage(1);
+  };
+
+  // Limpiar la búsqueda
+  const handleClearSearch = () => {
+    setSearchValue('');
+    setDebouncedSearch('');
+    setCurrentPage(1);
+  };
+
+  // Recuperar una búsqueda anterior
+  const handleSelectSearch = (search) => {
+    setSearchValue(search);
+    setCurrentPage(1);
+  };
+
+  // Cambiar el ordenamiento
   const handleSort = (key) => {
     setSortConfig((previousConfig) => {
-      // Una columna nueva comienza en ascendente
       if (previousConfig.key !== key) {
         return {
           key,
@@ -218,7 +304,6 @@ function App() {
         };
       }
 
-      // Ascendente pasa a descendente
       if (previousConfig.direction === 'asc') {
         return {
           key,
@@ -226,7 +311,6 @@ function App() {
         };
       }
 
-      // Descendente vuelve al orden original
       if (previousConfig.direction === 'desc') {
         return {
           key: null,
@@ -239,6 +323,8 @@ function App() {
         direction: 'asc'
       };
     });
+
+    setCurrentPage(1);
   };
 
   // Registrar nuevas búsquedas
@@ -273,7 +359,7 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Guardar el historial
+  // Guardar historial en localStorage
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -281,28 +367,17 @@ function App() {
         JSON.stringify(searchHistory)
       );
     } catch {
-      // La aplicación continúa funcionando si
-      // localStorage no está disponible.
+      // La aplicación sigue funcionando si
+      // el almacenamiento no está disponible.
     }
   }, [searchHistory]);
-
-  // Limpiar búsqueda
-  const handleClearSearch = () => {
-    setSearchValue('');
-    setDebouncedSearch('');
-  };
-
-  // Recuperar una búsqueda anterior
-  const handleSelectSearch = (search) => {
-    setSearchValue(search);
-  };
 
   // Limpiar historial
   const handleClearHistory = () => {
     setSearchHistory([]);
   };
 
-  // Seleccionar un jugador
+  // Seleccionar un jugador de la tabla
   const handleSelectPlayer = (player) => {
     setSelectedPlayerId(player.id);
   };
@@ -310,18 +385,21 @@ function App() {
   return (
     <DashboardLayout
       searchValue={searchValue}
-      onSearchChange={setSearchValue}
+      onSearchChange={handleSearchChange}
       onSearchClear={handleClearSearch}
       resultsCount={filteredPlayers.length}
       searchHistory={searchHistory}
       onSelectSearch={handleSelectSearch}
       onClearHistory={handleClearHistory}
       stats={stats}
-      players={sortedPlayers}
+      players={paginatedPlayers}
       selectedPlayerId={selectedPlayerId}
       onPlayerSelect={handleSelectPlayer}
       sortConfig={sortConfig}
       onSort={handleSort}
+      pagination={pagination}
+      onPageChange={handlePageChange}
+      onItemsPerPageChange={handleItemsPerPageChange}
     />
   );
 }

@@ -1,0 +1,103 @@
+
+/* Contenedor de paginación provisional */
+.pagination-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid #3a4758;
+  border-radius: 10px;
+  background-color: #283445;
+}
+
+/* Selector de cantidad */
+.pagination-preview__settings {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pagination-preview__label {
+  color: #c5ced8;
+  font-size: 14px;
+}
+
+/* Selector */
+.pagination-preview__select {
+  padding: 8px 12px;
+  border: 1px solid #465365;
+  border-radius: 6px;
+  background-color: #1c2533;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Rango visible */
+.pagination-preview__summary {
+  margin: 0;
+  color: #f5bb48;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Navegación */
+.pagination-preview__navigation {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Botones */
+.pagination-preview__button {
+  padding: 9px 14px;
+  border: 1px solid #f5bb48;
+  border-radius: 6px;
+  background-color: #f5bb48;
+  color: #32210c;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pagination-preview__button:hover:not(:disabled) {
+  background-color: #ffd274;
+}
+
+.pagination-preview__button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-preview__button:focus-visible,
+.pagination-preview__select:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* Página actual */
+.pagination-preview__page {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Adaptación móvil */
+@media (max-width: 700px) {
+  .pagination-preview {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pagination-preview__navigation {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
