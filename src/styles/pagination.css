@@ -1,0 +1,214 @@
+
+/* Contenedor principal */
+.pagination {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 22px;
+  border: 1px solid #3a4758;
+  border-radius: 10px;
+  background-color: #283445;
+}
+
+/* Información superior */
+.pagination__information {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Selector de registros */
+.pagination__settings {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pagination__label {
+  color: #c5ced8;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.pagination__select {
+  min-width: 75px;
+  padding: 9px 12px;
+  border: 1px solid #465365;
+  border-radius: 7px;
+  background-color: #1c2533;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pagination__select:focus-visible {
+  outline: 2px solid #f5bb48;
+  outline-offset: 3px;
+}
+
+/* Contador de registros */
+.pagination__summary {
+  margin: 0;
+  color: #f5bb48;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Navegación principal */
+.pagination__navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Botones principales */
+.pagination__button {
+  min-height: 38px;
+  padding: 9px 13px;
+  border: 1px solid #f5bb48;
+  border-radius: 7px;
+  background-color: #f5bb48;
+  color: #32210c;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* Efecto al pasar el cursor */
+.pagination__button:hover:not(:disabled) {
+  background-color: #ffd274;
+  transform: translateY(-1px);
+}
+
+/* Botones deshabilitados */
+.pagination__button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Contenedor de números de página */
+.pagination__pages {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Botones numéricos */
+.pagination__page-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 8px;
+  border: 1px solid #465365;
+  border-radius: 7px;
+  background-color: #1c2533;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Efecto de los números */
+.pagination__page-button:hover {
+  border-color: #f5bb48;
+  background-color: #354357;
+}
+
+/* Página activa */
+.pagination__page-button--active,
+.pagination__page-button--active:hover {
+  border-color: #f5bb48;
+  background-color: #f5bb48;
+  color: #32210c;
+}
+
+/* Separadores entre páginas */
+.pagination__ellipsis {
+  padding: 0 5px;
+  color: #c5ced8;
+  font-size: 16px;
+}
+
+/* Indicadores de foco */
+.pagination__button:focus-visible,
+.pagination__page-button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* Información inferior */
+.pagination__page-info {
+  margin: 0;
+  color: #c5ced8;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Adaptación a tabletas */
+@media (max-width: 900px) {
+  .pagination {
+    padding: 18px;
+  }
+
+  .pagination__information {
+    justify-content: center;
+  }
+}
+
+/* Adaptación a celulares */
+@media (max-width: 600px) {
+  .pagination {
+    padding: 15px;
+    gap: 16px;
+  }
+
+  .pagination__information {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pagination__navigation {
+    gap: 6px;
+  }
+
+  .pagination__button {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .pagination__page-button {
+    min-width: 35px;
+    min-height: 35px;
+    font-size: 13px;
+  }
+}
+
+/* Reducir animaciones */
+@media (prefers-reduced-motion: reduce) {
+  .pagination__button,
+  .pagination__page-button {
+    transition: none;
+  }
+}
