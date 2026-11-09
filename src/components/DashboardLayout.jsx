@@ -1,12 +1,16 @@
 
 import SearchBar from './SearchBar';
+import SearchHistory from './SearchHistory';
 import '../styles/dashboard.css';
 
 function DashboardLayout({
   searchValue,
   onSearchChange,
   onSearchClear,
-  resultsCount
+  resultsCount,
+  searchHistory,
+  onSelectSearch,
+  onClearHistory
 }) {
   return (
     <div className="dashboard">
@@ -72,8 +76,11 @@ function DashboardLayout({
         </section>
 
         <section className="dashboard__history">
-          <h2>Historial de búsquedas</h2>
-          <p>Aún no hay búsquedas registradas.</p>
+          <SearchHistory
+            history={searchHistory}
+            onSelectSearch={onSelectSearch}
+            onClearHistory={onClearHistory}
+          />
         </section>
 
         <section className="dashboard__players">

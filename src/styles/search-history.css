@@ -1,0 +1,130 @@
+
+/* Contenedor del historial */
+.search-history {
+  width: 100%;
+}
+
+/* Encabezado */
+.search-history__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.search-history__title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Botón para limpiar */
+.search-history__clear {
+  padding: 9px 15px;
+  border: 1px solid #f5bb48;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #f5bb48;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.search-history__clear:hover {
+  background-color: rgba(245, 187, 72, 0.15);
+}
+
+/* Mensajes */
+.search-history__empty,
+.search-history__description {
+  margin: 0 0 14px;
+  color: #c5ced8;
+  font-size: 14px;
+}
+
+/* Lista de búsquedas */
+.search-history__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.search-history__item {
+  max-width: 100%;
+}
+
+/* Botones del historial */
+.search-history__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #465365;
+  border-radius: 8px;
+  background-color: #1c2533;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.search-history__button:hover {
+  border-color: #f5bb48;
+  background-color: #354357;
+}
+
+.search-history__button:focus-visible,
+.search-history__clear:focus-visible {
+  outline: 2px solid #f5bb48;
+  outline-offset: 3px;
+}
+
+.search-history__button span:last-child {
+  overflow-wrap: anywhere;
+}
+
+.search-history__icon {
+  color: #f5bb48;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Contador */
+.search-history__counter {
+  margin: 15px 0 0;
+  color: #aab4c1;
+  font-size: 12px;
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 480px) {
+  .search-history__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .search-history__title {
+    font-size: 18px;
+  }
+
+  .search-history__clear {
+    width: 100%;
+  }
+
+  .search-history__button {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+}
