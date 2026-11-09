@@ -1,14 +1,25 @@
+
+import SearchBar from './SearchBar';
 import '../styles/dashboard.css';
 
-function DashboardLayout() {
+function DashboardLayout({
+  searchValue,
+  onSearchChange,
+  onSearchClear,
+  resultsCount
+}) {
   return (
     <div className="dashboard">
       <header className="dashboard__header">
         <div className="dashboard__branding">
-          <h1 className="dashboard__brand">TOP CLUB SOCCER</h1>
+          <h1 className="dashboard__brand">
+            TOP CLUB SOCCER
+          </h1>
+
           <h2 className="dashboard__title">
             Dashboard de Jugadores
           </h2>
+
           <p className="dashboard__description">
             Explora las estadísticas de los mejores jugadores
             de fútbol del mundo.
@@ -26,17 +37,12 @@ function DashboardLayout() {
 
       <main className="dashboard__main">
         <section className="dashboard__search">
-          <h2>Buscar jugadores</h2>
-
-          <input
-            className="dashboard__search-input"
-            type="text"
-            placeholder="Buscar jugador por nombre..."
-            aria-label="Buscar jugador por nombre"
-            disabled
+          <SearchBar
+            value={searchValue}
+            onChange={onSearchChange}
+            onClear={onSearchClear}
+            resultsCount={resultsCount}
           />
-
-          <p>Resultados: 0</p>
         </section>
 
         <section className="dashboard__stats">
@@ -92,7 +98,8 @@ function DashboardLayout() {
               <tbody>
                 <tr>
                   <td colSpan={9}>
-                    Los jugadores se cargarán próximamente.
+                    La tabla interactiva se implementará
+                    en una próxima etapa.
                   </td>
                 </tr>
               </tbody>
