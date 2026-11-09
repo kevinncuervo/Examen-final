@@ -1,13 +1,17 @@
 
-
 import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
 import { players } from './data/players';
 
-// Clave del historial en localStorage
+// Clave del historial
 const HISTORY_KEY = 'top-club-soccer-search-history';
 
-// Recuperar historial almacenado
+// Posiciones presentes en los datos originales
+const POSITIONS = [
+  ...new Set(players.map((player) => player.position))
+];
+
+// Recuperar historial de búsquedas
 function loadSearchHistory() {
   try {
     const savedHistory = localStorage.getItem(HISTORY_KEY);
@@ -47,7 +51,7 @@ function App() {
   const [searchValue, setSearchValue] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  // Estado del historial
+  // Historial de búsquedas
   const [searchHistory, setSearchHistory] = useState(
     loadSearchHistory
   );
@@ -63,7 +67,7 @@ function App() {
     };
   }, [searchValue]);
 
-  // Filtrar jugadores exclusivamente por nombre
+  // Filtrar jugadores por nombre
   const filteredPlayers = useMemo(() => {
     const normalizedSearch = debouncedSearch
       .trim()
@@ -77,33 +81,60 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Calcular estadísticas del conjunto filtrado
+  // Calcular estadísticas y distribución por posición
   const stats = useMemo(() => {
     const totalPlayers = filteredPlayers.length;
 
-    // Manejar búsquedas sin resultados
+    // Contar jugadores de cada posición
+    const positionCounts = filteredPlayers.reduce(
+      (counts, player) => {
+        counts[player.position] =
+          (counts[player.position] || 0) + 1;
+
+        return counts;
+      },
+      {}
+    );
+
+    // Construir distribución con sus porcentajes
+    const positionDistribution = POSITIONS.map((position) => {
+      const count = positionCounts[position] || 0;
+
+      const percentage = totalPlayers === 0
+        ? 0
+        : (count / totalPlayers) * 100;
+
+      return {
+        position,
+        count,
+        percentage
+      };
+    });
+
+    // Caso sin resultados
     if (totalPlayers === 0) {
       return {
         totalPlayers: 0,
         averageAge: 0,
         averageGoals: 0,
-        topScorer: null
+        topScorer: null,
+        positionDistribution
       };
     }
 
-    // Sumar las edades
+    // Sumar edades
     const totalAge = filteredPlayers.reduce(
       (total, player) => total + player.age,
       0
     );
 
-    // Sumar los goles
+    // Sumar goles
     const totalGoals = filteredPlayers.reduce(
       (total, player) => total + player.goals,
       0
     );
 
-    // Identificar al jugador con más goles
+    // Encontrar al máximo goleador
     const topScorer = filteredPlayers.reduce(
       (bestPlayer, currentPlayer) => (
         currentPlayer.goals > bestPlayer.goals
@@ -117,7 +148,8 @@ function App() {
       totalPlayers,
       averageAge: totalAge / totalPlayers,
       averageGoals: totalGoals / totalPlayers,
-      topScorer
+      topScorer,
+      positionDistribution
     };
   }, [filteredPlayers]);
 
@@ -148,7 +180,6 @@ function App() {
           normalizedSearch
         ));
 
-      // Guardar las cinco más recientes
       return [
         newSearch,
         ...historyWithoutDuplicates
@@ -164,18 +195,18 @@ function App() {
         JSON.stringify(searchHistory)
       );
     } catch {
-      // La búsqueda funciona incluso si no
-      // está disponible localStorage.
+      // La búsqueda funciona incluso cuando
+      // el almacenamiento no está disponible.
     }
   }, [searchHistory]);
 
-  // Limpiar campo de búsqueda
+  // Limpiar búsqueda
   const handleClearSearch = () => {
     setSearchValue('');
     setDebouncedSearch('');
   };
 
-  // Recuperar búsqueda del historial
+  // Seleccionar búsqueda del historial
   const handleSelectSearch = (search) => {
     setSearchValue(search);
   };

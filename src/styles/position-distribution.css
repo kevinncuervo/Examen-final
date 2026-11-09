@@ -1,0 +1,179 @@
+
+/* Contenedor principal del gráfico */
+.position-distribution {
+  width: 100%;
+  margin-top: 25px;
+  padding: 24px;
+  border: 1px solid #3a4758;
+  border-radius: 10px;
+}
+
+/* Encabezado */
+.position-distribution__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* Título */
+.position-distribution__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Contador general */
+.position-distribution__total {
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Lista de posiciones */
+.position-distribution__list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Cada posición */
+.position-distribution__item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Nombre y porcentaje */
+.position-distribution__info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.position-distribution__name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.position-distribution__count {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Fondo de las barras */
+.position-distribution__track {
+  width: 100%;
+  height: 14px;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+/* Barra de porcentaje */
+.position-distribution__bar {
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(
+    90deg,
+    #d66a22,
+    #f5bb48
+  );
+  transition: width 0.3s ease;
+}
+
+/* Mensaje sin resultados */
+.position-distribution__empty {
+  margin: 0 0 20px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Colores del modo oscuro */
+.position-distribution--dark {
+  background-color: #283445;
+}
+
+.position-distribution--dark .position-distribution__title {
+  color: #ffffff;
+}
+
+.position-distribution--dark .position-distribution__total {
+  background-color: #1c2533;
+  color: #f5bb48;
+}
+
+.position-distribution--dark .position-distribution__name {
+  color: #ffffff;
+}
+
+.position-distribution--dark .position-distribution__count,
+.position-distribution--dark .position-distribution__empty {
+  color: #c5ced8;
+}
+
+.position-distribution--dark .position-distribution__track {
+  background-color: #151c28;
+}
+
+/* Colores preparados para modo claro */
+.position-distribution--light {
+  background-color: #ffffff;
+  border-color: #d3d9e1;
+}
+
+.position-distribution--light .position-distribution__title {
+  color: #243246;
+}
+
+.position-distribution--light .position-distribution__total {
+  background-color: #fff1d6;
+  color: #96510e;
+}
+
+.position-distribution--light .position-distribution__name {
+  color: #243246;
+}
+
+.position-distribution--light .position-distribution__count,
+.position-distribution--light .position-distribution__empty {
+  color: #475569;
+}
+
+.position-distribution--light .position-distribution__track {
+  background-color: #e9edf2;
+}
+
+/* Adaptación a celulares */
+@media (max-width: 480px) {
+  .position-distribution {
+    padding: 18px;
+  }
+
+  .position-distribution__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .position-distribution__title {
+    font-size: 17px;
+  }
+
+  .position-distribution__count {
+    font-size: 12px;
+  }
+}
+
+/* Respeto a preferencias de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .position-distribution__bar {
+    transition: none;
+  }
+}

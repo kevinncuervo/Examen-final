@@ -1,4 +1,5 @@
 
+import PositionDistribution from './PositionDistribution';
 import '../styles/stats-panel.css';
 
 function StatsPanel({ stats, darkMode = true }) {
@@ -69,6 +70,12 @@ function StatsPanel({ stats, darkMode = true }) {
           </span>
         </article>
       </div>
+
+      <PositionDistribution
+        distribution={stats.positionDistribution}
+        totalPlayers={stats.totalPlayers}
+        darkMode={darkMode}
+      />
     </div>
   );
 }
