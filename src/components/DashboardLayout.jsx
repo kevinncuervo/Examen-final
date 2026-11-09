@@ -1,6 +1,7 @@
 
 import SearchBar from './SearchBar';
 import SearchHistory from './SearchHistory';
+import StatsPanel from './StatsPanel';
 import '../styles/dashboard.css';
 
 function DashboardLayout({
@@ -10,7 +11,8 @@ function DashboardLayout({
   resultsCount,
   searchHistory,
   onSelectSearch,
-  onClearHistory
+  onClearHistory,
+  stats
 }) {
   return (
     <div className="dashboard">
@@ -50,29 +52,10 @@ function DashboardLayout({
         </section>
 
         <section className="dashboard__stats">
-          <h2>Estadísticas generales</h2>
-
-          <div className="dashboard__stats-grid">
-            <article className="dashboard__stat-card">
-              <h3>Total de jugadores</h3>
-              <p>—</p>
-            </article>
-
-            <article className="dashboard__stat-card">
-              <h3>Promedio de edad</h3>
-              <p>—</p>
-            </article>
-
-            <article className="dashboard__stat-card">
-              <h3>Promedio de goles</h3>
-              <p>—</p>
-            </article>
-
-            <article className="dashboard__stat-card">
-              <h3>Máximo goleador</h3>
-              <p>—</p>
-            </article>
-          </div>
+          <StatsPanel
+            stats={stats}
+            darkMode={true}
+          />
         </section>
 
         <section className="dashboard__history">

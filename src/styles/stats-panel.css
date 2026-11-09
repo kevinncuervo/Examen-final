@@ -1,0 +1,139 @@
+
+/* Contenedor de estadísticas */
+.stats-panel {
+  width: 100%;
+}
+
+/* Título principal */
+.stats-panel__title {
+  margin: 0 0 20px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Cuadrícula de tarjetas */
+.stats-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+/* Tarjetas individuales */
+.stats-panel__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 145px;
+  padding: 24px 18px;
+  border: 1px solid #3a4758;
+  border-radius: 10px;
+  text-align: center;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Efecto visual */
+.stats-panel__card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* Título de cada estadística */
+.stats-panel__label {
+  margin: 0 0 15px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Valor principal */
+.stats-panel__value {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* Nombre del goleador */
+.stats-panel__value--player {
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+/* Información adicional */
+.stats-panel__detail {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+/* Colores del modo oscuro */
+.stats-panel--dark .stats-panel__title {
+  color: #ffffff;
+}
+
+.stats-panel--dark .stats-panel__card {
+  background-color: #283445;
+}
+
+.stats-panel--dark .stats-panel__label {
+  color: #c5ced8;
+}
+
+.stats-panel--dark .stats-panel__value {
+  color: #f5bb48;
+}
+
+.stats-panel--dark .stats-panel__detail {
+  color: #aab4c1;
+}
+
+/* Colores preparados para el modo claro */
+.stats-panel--light .stats-panel__title {
+  color: #243246;
+}
+
+.stats-panel--light .stats-panel__card {
+  background-color: #ffffff;
+  border-color: #d3d9e1;
+}
+
+.stats-panel--light .stats-panel__label {
+  color: #475569;
+}
+
+.stats-panel--light .stats-panel__value {
+  color: #a85a13;
+}
+
+.stats-panel--light .stats-panel__detail {
+  color: #64748b;
+}
+
+/* Tabletas */
+@media (max-width: 900px) {
+  .stats-panel__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+  .stats-panel__grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stats-panel__card {
+    min-height: 120px;
+    padding: 18px;
+  }
+
+  .stats-panel__value {
+    font-size: 25px;
+  }
+
+  .stats-panel__value--player {
+    font-size: 18px;
+  }
+}

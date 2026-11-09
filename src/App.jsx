@@ -1,12 +1,13 @@
 
+
 import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
 import { players } from './data/players';
 
-// Clave utilizada para guardar el historial
+// Clave del historial en localStorage
 const HISTORY_KEY = 'top-club-soccer-search-history';
 
-// Recuperar el historial almacenado
+// Recuperar historial almacenado
 function loadSearchHistory() {
   try {
     const savedHistory = localStorage.getItem(HISTORY_KEY);
@@ -42,13 +43,11 @@ function loadSearchHistory() {
 }
 
 function App() {
-  // Texto escrito por el usuario
+  // Estados de búsqueda
   const [searchValue, setSearchValue] = useState('');
-
-  // Búsqueda aplicada después de 300 ms
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  // Historial recuperado desde localStorage
+  // Estado del historial
   const [searchHistory, setSearchHistory] = useState(
     loadSearchHistory
   );
@@ -78,11 +77,54 @@ function App() {
     });
   }, [debouncedSearch]);
 
+  // Calcular estadísticas del conjunto filtrado
+  const stats = useMemo(() => {
+    const totalPlayers = filteredPlayers.length;
+
+    // Manejar búsquedas sin resultados
+    if (totalPlayers === 0) {
+      return {
+        totalPlayers: 0,
+        averageAge: 0,
+        averageGoals: 0,
+        topScorer: null
+      };
+    }
+
+    // Sumar las edades
+    const totalAge = filteredPlayers.reduce(
+      (total, player) => total + player.age,
+      0
+    );
+
+    // Sumar los goles
+    const totalGoals = filteredPlayers.reduce(
+      (total, player) => total + player.goals,
+      0
+    );
+
+    // Identificar al jugador con más goles
+    const topScorer = filteredPlayers.reduce(
+      (bestPlayer, currentPlayer) => (
+        currentPlayer.goals > bestPlayer.goals
+          ? currentPlayer
+          : bestPlayer
+      ),
+      filteredPlayers[0]
+    );
+
+    return {
+      totalPlayers,
+      averageAge: totalAge / totalPlayers,
+      averageGoals: totalGoals / totalPlayers,
+      topScorer
+    };
+  }, [filteredPlayers]);
+
   // Registrar búsquedas después del debounce
   useEffect(() => {
     const newSearch = debouncedSearch.trim();
 
-    // No guardar búsquedas vacías
     if (newSearch.length === 0) {
       return;
     }
@@ -91,14 +133,22 @@ function App() {
       const normalizedSearch = newSearch
         .toLocaleLowerCase('es');
 
-      // Eliminar coincidencias anteriores
+      // Evitar actualizaciones innecesarias
+      if (
+        previousHistory[0]?.toLocaleLowerCase('es') ===
+        normalizedSearch
+      ) {
+        return previousHistory;
+      }
+
+      // Eliminar búsquedas repetidas
       const historyWithoutDuplicates =
         previousHistory.filter((search) => (
           search.toLocaleLowerCase('es') !==
           normalizedSearch
         ));
 
-      // Guardar la búsqueda más reciente al inicio
+      // Guardar las cinco más recientes
       return [
         newSearch,
         ...historyWithoutDuplicates
@@ -106,7 +156,7 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Persistir el historial en localStorage
+  // Guardar historial en localStorage
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -114,23 +164,23 @@ function App() {
         JSON.stringify(searchHistory)
       );
     } catch {
-      // La búsqueda sigue funcionando si el
-      // navegador no permite el almacenamiento.
+      // La búsqueda funciona incluso si no
+      // está disponible localStorage.
     }
   }, [searchHistory]);
 
-  // Limpiar el buscador
+  // Limpiar campo de búsqueda
   const handleClearSearch = () => {
     setSearchValue('');
     setDebouncedSearch('');
   };
 
-  // Seleccionar una búsqueda anterior
+  // Recuperar búsqueda del historial
   const handleSelectSearch = (search) => {
     setSearchValue(search);
   };
 
-  // Borrar todo el historial
+  // Limpiar historial
   const handleClearHistory = () => {
     setSearchHistory([]);
   };
@@ -144,6 +194,7 @@ function App() {
       searchHistory={searchHistory}
       onSelectSearch={handleSelectSearch}
       onClearHistory={handleClearHistory}
+      stats={stats}
     />
   );
 }
