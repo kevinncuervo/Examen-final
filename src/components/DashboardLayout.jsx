@@ -1,4 +1,3 @@
-
 import SearchBar from './SearchBar';
 import SearchHistory from './SearchHistory';
 import StatsPanel from './StatsPanel';
@@ -16,7 +15,9 @@ function DashboardLayout({
   stats,
   players,
   selectedPlayerId,
-  onPlayerSelect
+  onPlayerSelect,
+  sortConfig,
+  onSort
 }) {
   return (
     <div className="dashboard">
@@ -76,6 +77,8 @@ function DashboardLayout({
             onRowClick={onPlayerSelect}
             selectedPlayerId={selectedPlayerId}
             darkMode={true}
+            sortConfig={sortConfig}
+            onSort={onSort}
           />
         </section>
       </main>

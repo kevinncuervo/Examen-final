@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
 import { players } from './data/players';
@@ -6,7 +5,7 @@ import { players } from './data/players';
 // Clave del historial de búsquedas
 const HISTORY_KEY = 'top-club-soccer-search-history';
 
-// Posiciones presentes en los jugadores
+// Posiciones disponibles
 const POSITIONS = [
   ...new Set(players.map((player) => player.position))
 ];
@@ -56,8 +55,14 @@ function App() {
     loadSearchHistory
   );
 
-  // Identificador del jugador seleccionado
+  // Jugador seleccionado
   const [selectedPlayerId, setSelectedPlayerId] = useState(null);
+
+  // Configuración del ordenamiento
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: 'none'
+  });
 
   // Debounce de 300 milisegundos
   useEffect(() => {
@@ -84,7 +89,7 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Estadísticas dinámicas y distribución por posición
+  // Calcular estadísticas y distribución por posición
   const stats = useMemo(() => {
     const totalPlayers = filteredPlayers.length;
 
@@ -150,6 +155,92 @@ function App() {
     };
   }, [filteredPlayers]);
 
+  // Ordenar los jugadores filtrados
+  const sortedPlayers = useMemo(() => {
+    const { key, direction } = sortConfig;
+
+    // Restaurar el orden original si no hay ordenamiento
+    if (key === null || direction === 'none') {
+      return filteredPlayers;
+    }
+
+    // Determinar la dirección del ordenamiento
+    const multiplier = direction === 'asc' ? 1 : -1;
+
+    // Incorporar índice original para orden estable
+    const indexedPlayers = filteredPlayers.map(
+      (player, index) => ({
+        player,
+        originalIndex: index
+      })
+    );
+
+    indexedPlayers.sort((first, second) => {
+      const firstValue = first.player[key];
+      const secondValue = second.player[key];
+
+      let comparison = 0;
+
+      // Comparar correctamente los valores numéricos
+      if (
+        typeof firstValue === 'number' &&
+        typeof secondValue === 'number'
+      ) {
+        comparison = firstValue - secondValue;
+      } else {
+        // Comparar textos respetando el idioma español
+        comparison = String(firstValue).localeCompare(
+          String(secondValue),
+          'es',
+          { sensitivity: 'base' }
+        );
+      }
+
+      // Mantener el orden original en caso de empate
+      if (comparison === 0) {
+        return first.originalIndex - second.originalIndex;
+      }
+
+      return comparison * multiplier;
+    });
+
+    return indexedPlayers.map(({ player }) => player);
+  }, [filteredPlayers, sortConfig]);
+
+  // Cambiar el ordenamiento al seleccionar una columna
+  const handleSort = (key) => {
+    setSortConfig((previousConfig) => {
+      // Una columna nueva comienza en ascendente
+      if (previousConfig.key !== key) {
+        return {
+          key,
+          direction: 'asc'
+        };
+      }
+
+      // Ascendente pasa a descendente
+      if (previousConfig.direction === 'asc') {
+        return {
+          key,
+          direction: 'desc'
+        };
+      }
+
+      // Descendente vuelve al orden original
+      if (previousConfig.direction === 'desc') {
+        return {
+          key: null,
+          direction: 'none'
+        };
+      }
+
+      return {
+        key,
+        direction: 'asc'
+      };
+    });
+  };
+
   // Registrar nuevas búsquedas
   useEffect(() => {
     const newSearch = debouncedSearch.trim();
@@ -182,7 +273,7 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Guardar historial
+  // Guardar el historial
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -190,8 +281,8 @@ function App() {
         JSON.stringify(searchHistory)
       );
     } catch {
-      // La aplicación continúa si localStorage
-      // no está disponible.
+      // La aplicación continúa funcionando si
+      // localStorage no está disponible.
     }
   }, [searchHistory]);
 
@@ -201,7 +292,7 @@ function App() {
     setDebouncedSearch('');
   };
 
-  // Seleccionar búsqueda anterior
+  // Recuperar una búsqueda anterior
   const handleSelectSearch = (search) => {
     setSearchValue(search);
   };
@@ -211,7 +302,7 @@ function App() {
     setSearchHistory([]);
   };
 
-  // Seleccionar un jugador de la tabla
+  // Seleccionar un jugador
   const handleSelectPlayer = (player) => {
     setSelectedPlayerId(player.id);
   };
@@ -226,9 +317,11 @@ function App() {
       onSelectSearch={handleSelectSearch}
       onClearHistory={handleClearHistory}
       stats={stats}
-      players={filteredPlayers}
+      players={sortedPlayers}
       selectedPlayerId={selectedPlayerId}
       onPlayerSelect={handleSelectPlayer}
+      sortConfig={sortConfig}
+      onSort={handleSort}
     />
   );
 }

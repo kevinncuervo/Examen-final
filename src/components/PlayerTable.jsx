@@ -1,4 +1,3 @@
-
 import PlayerRow from './PlayerRow';
 import '../styles/player-table.css';
 
@@ -22,10 +21,12 @@ function PlayerTable({
   rowColors = 'none',
   selectedPlayerId = null
 }) {
+  // Identificar al jugador seleccionado
   const selectedPlayer = players.find(
     (player) => player.id === selectedPlayerId
   );
 
+  // Clases de coloreo para futuras funcionalidades
   const getColorClass = (index) => {
     const rowNumber = index + 1;
 
@@ -40,22 +41,23 @@ function PlayerTable({
     return '';
   };
 
+  // Indicador visual del ordenamiento
   const getSortIndicator = (key) => {
-    if (sortConfig.key !== key) {
-      return '';
+    if (
+      sortConfig.key !== key ||
+      sortConfig.direction === 'none'
+    ) {
+      return '↕';
     }
 
     if (sortConfig.direction === 'asc') {
-      return ' ▲';
+      return '▲';
     }
 
-    if (sortConfig.direction === 'desc') {
-      return ' ▼';
-    }
-
-    return '';
+    return '▼';
   };
 
+  // Dirección accesible para lectores de pantalla
   const getAriaSort = (key) => {
     if (sortConfig.key !== key) {
       return 'none';
@@ -70,6 +72,19 @@ function PlayerTable({
     }
 
     return 'none';
+  };
+
+  // Descripción accesible de la siguiente acción
+  const getSortLabel = (column) => {
+    if (sortConfig.key !== column.key) {
+      return `Ordenar ${column.label} de forma ascendente`;
+    }
+
+    if (sortConfig.direction === 'asc') {
+      return `Ordenar ${column.label} de forma descendente`;
+    }
+
+    return `Restaurar orden original de ${column.label}`;
   };
 
   return (
@@ -89,30 +104,29 @@ function PlayerTable({
         <table className="dashboard__table player-table__table">
           <thead>
             <tr>
-              <th scope="col">FAV</th>
+              <th scope="col">
+                FAV
+              </th>
 
               {COLUMNS.map((column) => (
                 <th
                   key={column.key}
                   scope="col"
-                  aria-sort={
-                    onSort
-                      ? getAriaSort(column.key)
-                      : undefined
-                  }
+                  aria-sort={getAriaSort(column.key)}
                 >
-                  {onSort ? (
-                    <button
-                      className="player-table__sort-button"
-                      type="button"
-                      onClick={() => onSort(column.key)}
-                    >
-                      {column.label}
+                  <button
+                    className="player-table__sort-button"
+                    type="button"
+                    onClick={() => onSort?.(column.key)}
+                    aria-label={getSortLabel(column)}
+                    disabled={!onSort}
+                  >
+                    <span>{column.label}</span>
+
+                    <span aria-hidden="true">
                       {getSortIndicator(column.key)}
-                    </button>
-                  ) : (
-                    column.label
-                  )}
+                    </span>
+                  </button>
                 </th>
               ))}
             </tr>
