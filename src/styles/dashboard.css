@@ -1,0 +1,299 @@
+
+/* Estilos generales */
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: block;
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #101722;
+  color: #f5f5f5;
+}
+
+#root {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+/* Contenedor principal */
+.dashboard {
+  width: 95%;
+  max-width: 1200px;
+  margin: 30px auto;
+  background-color: #1c2533;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+}
+
+/* Encabezado */
+.dashboard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 35px;
+  background: linear-gradient(110deg, #67351e, #d66a22);
+}
+
+.dashboard__brand {
+  margin: 0 0 12px;
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.dashboard__title {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-size: 24px;
+}
+
+.dashboard__description {
+  margin: 0;
+  color: #fff0df;
+  font-size: 15px;
+}
+
+/* Botón de tema */
+.dashboard__theme-button {
+  padding: 12px 20px;
+  border: 1px solid #f5c064;
+  border-radius: 8px;
+  background-color: #f5bb48;
+  color: #32210c;
+  font-weight: 600;
+}
+
+.dashboard__theme-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Contenido principal */
+.dashboard__main {
+  padding: 30px 35px;
+}
+
+/* Adaptación inicial a móviles */
+@media (max-width: 700px) {
+  .dashboard {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .dashboard__header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+  }
+
+  .dashboard__brand {
+    font-size: 26px;
+  }
+
+  .dashboard__main {
+    padding: 20px;
+  }
+}
+
+/* Sección de búsqueda */
+.dashboard__search {
+  margin-bottom: 30px;
+}
+
+.dashboard__search h2,
+.dashboard__stats h2,
+.dashboard__history h2,
+.dashboard__players h2 {
+  margin: 0 0 18px;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.dashboard__search-input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid #465365;
+  border-radius: 8px;
+  background-color: #283445;
+  color: #ffffff;
+  font-size: 15px;
+  outline: none;
+}
+
+.dashboard__search-input::placeholder {
+  color: #aab4c1;
+}
+
+.dashboard__search-input:focus {
+  border-color: #f5bb48;
+}
+
+.dashboard__search p {
+  margin-top: 12px;
+  color: #c5ced8;
+  font-size: 14px;
+}
+
+/* Sección de estadísticas */
+.dashboard__stats {
+  margin-bottom: 30px;
+}
+
+.dashboard__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.dashboard__stat-card {
+  padding: 24px 18px;
+  border: 1px solid #3a4758;
+  border-radius: 10px;
+  background-color: #283445;
+  text-align: center;
+}
+
+.dashboard__stat-card h3 {
+  margin: 0 0 16px;
+  color: #c5ced8;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dashboard__stat-card p {
+  margin: 0;
+  color: #f5bb48;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Estadísticas en tabletas */
+@media (max-width: 900px) {
+  .dashboard__stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Estadísticas en celulares */
+@media (max-width: 480px) {
+  .dashboard__stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__stat-card {
+    padding: 18px;
+  }
+}
+
+/* Historial de búsquedas */
+.dashboard__history {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #3a4758;
+  border-radius: 10px;
+  background-color: #283445;
+}
+
+.dashboard__history p {
+  margin: 0;
+  color: #c5ced8;
+  font-size: 14px;
+}
+
+/* Sección de jugadores */
+.dashboard__players {
+  margin-top: 30px;
+}
+
+.dashboard__table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #3a4758;
+  border-radius: 10px;
+}
+
+/* Tabla principal */
+.dashboard__table {
+  width: 100%;
+  min-width: 950px;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  color: #253041;
+  font-size: 14px;
+  text-align: left;
+}
+
+/* Encabezados de tabla */
+.dashboard__table thead {
+  background-color: #e9edf2;
+}
+
+.dashboard__table th {
+  padding: 16px 12px;
+  border-bottom: 2px solid #d3d9e1;
+  color: #243246;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Celdas */
+.dashboard__table td {
+  padding: 15px 12px;
+  border-bottom: 1px solid #e2e6eb;
+  vertical-align: middle;
+}
+
+/* Filas */
+.dashboard__table tbody tr {
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.dashboard__table tbody tr:hover {
+  background-color: #f4f7fb;
+}
+
+.dashboard__table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Mensaje cuando no hay jugadores */
+.dashboard__table td[colspan] {
+  padding: 30px 15px;
+  color: #64748b;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Adaptación de la tabla */
+@media (max-width: 700px) {
+  .dashboard__history {
+    padding: 16px;
+  }
+
+  .dashboard__table {
+    font-size: 13px;
+  }
+
+  .dashboard__table th,
+  .dashboard__table td {
+    padding: 12px 10px;
+  }
+}

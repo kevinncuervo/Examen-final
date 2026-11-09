@@ -1,3 +1,4 @@
+import '../styles/dashboard.css';
 
 function DashboardLayout() {
   return (
