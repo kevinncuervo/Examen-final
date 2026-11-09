@@ -2,6 +2,7 @@
 import SearchBar from './SearchBar';
 import SearchHistory from './SearchHistory';
 import StatsPanel from './StatsPanel';
+import PlayerTable from './PlayerTable';
 import '../styles/dashboard.css';
 
 function DashboardLayout({
@@ -12,7 +13,10 @@ function DashboardLayout({
   searchHistory,
   onSelectSearch,
   onClearHistory,
-  stats
+  stats,
+  players,
+  selectedPlayerId,
+  onPlayerSelect
 }) {
   return (
     <div className="dashboard">
@@ -67,34 +71,12 @@ function DashboardLayout({
         </section>
 
         <section className="dashboard__players">
-          <h2>Listado de jugadores</h2>
-
-          <div className="dashboard__table-container">
-            <table className="dashboard__table">
-              <thead>
-                <tr>
-                  <th>FAV</th>
-                  <th>JUGADOR</th>
-                  <th>CLUB</th>
-                  <th>POSICIÓN</th>
-                  <th>PAÍS</th>
-                  <th>EDAD</th>
-                  <th>GOLES</th>
-                  <th>ASISTENCIAS</th>
-                  <th>RATING</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td colSpan={9}>
-                    La tabla interactiva se implementará
-                    en una próxima etapa.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <PlayerTable
+            players={players}
+            onRowClick={onPlayerSelect}
+            selectedPlayerId={selectedPlayerId}
+            darkMode={true}
+          />
         </section>
       </main>
     </div>

@@ -3,15 +3,15 @@ import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
 import { players } from './data/players';
 
-// Clave del historial
+// Clave del historial de búsquedas
 const HISTORY_KEY = 'top-club-soccer-search-history';
 
-// Posiciones presentes en los datos originales
+// Posiciones presentes en los jugadores
 const POSITIONS = [
   ...new Set(players.map((player) => player.position))
 ];
 
-// Recuperar historial de búsquedas
+// Recuperar el historial desde localStorage
 function loadSearchHistory() {
   try {
     const savedHistory = localStorage.getItem(HISTORY_KEY);
@@ -56,6 +56,9 @@ function App() {
     loadSearchHistory
   );
 
+  // Identificador del jugador seleccionado
+  const [selectedPlayerId, setSelectedPlayerId] = useState(null);
+
   // Debounce de 300 milisegundos
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -67,7 +70,7 @@ function App() {
     };
   }, [searchValue]);
 
-  // Filtrar jugadores por nombre
+  // Filtrar jugadores exclusivamente por nombre
   const filteredPlayers = useMemo(() => {
     const normalizedSearch = debouncedSearch
       .trim()
@@ -81,11 +84,10 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Calcular estadísticas y distribución por posición
+  // Estadísticas dinámicas y distribución por posición
   const stats = useMemo(() => {
     const totalPlayers = filteredPlayers.length;
 
-    // Contar jugadores de cada posición
     const positionCounts = filteredPlayers.reduce(
       (counts, player) => {
         counts[player.position] =
@@ -96,7 +98,6 @@ function App() {
       {}
     );
 
-    // Construir distribución con sus porcentajes
     const positionDistribution = POSITIONS.map((position) => {
       const count = positionCounts[position] || 0;
 
@@ -111,7 +112,6 @@ function App() {
       };
     });
 
-    // Caso sin resultados
     if (totalPlayers === 0) {
       return {
         totalPlayers: 0,
@@ -122,19 +122,16 @@ function App() {
       };
     }
 
-    // Sumar edades
     const totalAge = filteredPlayers.reduce(
       (total, player) => total + player.age,
       0
     );
 
-    // Sumar goles
     const totalGoals = filteredPlayers.reduce(
       (total, player) => total + player.goals,
       0
     );
 
-    // Encontrar al máximo goleador
     const topScorer = filteredPlayers.reduce(
       (bestPlayer, currentPlayer) => (
         currentPlayer.goals > bestPlayer.goals
@@ -153,7 +150,7 @@ function App() {
     };
   }, [filteredPlayers]);
 
-  // Registrar búsquedas después del debounce
+  // Registrar nuevas búsquedas
   useEffect(() => {
     const newSearch = debouncedSearch.trim();
 
@@ -165,7 +162,6 @@ function App() {
       const normalizedSearch = newSearch
         .toLocaleLowerCase('es');
 
-      // Evitar actualizaciones innecesarias
       if (
         previousHistory[0]?.toLocaleLowerCase('es') ===
         normalizedSearch
@@ -173,7 +169,6 @@ function App() {
         return previousHistory;
       }
 
-      // Eliminar búsquedas repetidas
       const historyWithoutDuplicates =
         previousHistory.filter((search) => (
           search.toLocaleLowerCase('es') !==
@@ -187,7 +182,7 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Guardar historial en localStorage
+  // Guardar historial
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -195,8 +190,8 @@ function App() {
         JSON.stringify(searchHistory)
       );
     } catch {
-      // La búsqueda funciona incluso cuando
-      // el almacenamiento no está disponible.
+      // La aplicación continúa si localStorage
+      // no está disponible.
     }
   }, [searchHistory]);
 
@@ -206,7 +201,7 @@ function App() {
     setDebouncedSearch('');
   };
 
-  // Seleccionar búsqueda del historial
+  // Seleccionar búsqueda anterior
   const handleSelectSearch = (search) => {
     setSearchValue(search);
   };
@@ -214,6 +209,11 @@ function App() {
   // Limpiar historial
   const handleClearHistory = () => {
     setSearchHistory([]);
+  };
+
+  // Seleccionar un jugador de la tabla
+  const handleSelectPlayer = (player) => {
+    setSelectedPlayerId(player.id);
   };
 
   return (
@@ -226,6 +226,9 @@ function App() {
       onSelectSearch={handleSelectSearch}
       onClearHistory={handleClearHistory}
       stats={stats}
+      players={filteredPlayers}
+      selectedPlayerId={selectedPlayerId}
+      onPlayerSelect={handleSelectPlayer}
     />
   );
 }

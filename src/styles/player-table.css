@@ -1,0 +1,197 @@
+
+/* Contenedor de la tabla */
+.player-table {
+  width: 100%;
+}
+
+/* Encabezado de la sección */
+.player-table__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.player-table__title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Contador de registros */
+.player-table__count {
+  padding: 8px 14px;
+  border-radius: 8px;
+  background-color: #283445;
+  color: #f5bb48;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Contenedor con desplazamiento horizontal */
+.player-table__container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Tabla */
+.player-table__table {
+  width: 100%;
+  min-width: 950px;
+  border-collapse: collapse;
+}
+
+/* Filas interactivas */
+.player-table__row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.player-table__row:hover td {
+  background-color: #fff4d6;
+}
+
+/* Jugador seleccionado */
+.player-table__row--selected td,
+.player-table__row--selected:hover td {
+  background-color: #ffe3a3;
+}
+
+/* Nombre del jugador */
+.player-table__name-button {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #245e91;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.player-table__name-button:hover {
+  text-decoration: underline;
+}
+
+.player-table__name-button:focus-visible {
+  outline: 2px solid #b36b13;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Columna de favoritos */
+.player-table__favorite-cell {
+  text-align: center;
+}
+
+.player-table__favorite-placeholder {
+  color: #aab4c1;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.player-table__favorite-button {
+  padding: 2px 6px;
+  border: none;
+  background: transparent;
+  color: #e5a323;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.player-table__favorite-button:focus-visible {
+  outline: 2px solid #b36b13;
+  outline-offset: 2px;
+}
+
+/* Valores numéricos */
+.player-table__number {
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Calificación */
+.player-table__rating {
+  color: #b36b13;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Botones de ordenamiento futuros */
+.player-table__sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+}
+
+.player-table__sort-button:hover {
+  color: #b36b13;
+}
+
+.player-table__sort-button:focus-visible {
+  outline: 2px solid #b36b13;
+  outline-offset: 3px;
+}
+
+/* Mensaje sin registros */
+.player-table__empty {
+  padding: 30px 15px;
+  color: #64748b;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Información del jugador seleccionado */
+.player-table__selection {
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  border: 1px solid #465365;
+  border-radius: 8px;
+  background-color: #283445;
+  color: #c5ced8;
+  font-size: 14px;
+}
+
+.player-table__selection strong {
+  color: #f5bb48;
+}
+
+/* Adaptación móvil */
+@media (max-width: 700px) {
+  .player-table__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .player-table__title {
+    font-size: 18px;
+  }
+
+  .player-table__table {
+    min-width: 950px;
+  }
+
+  .player-table__selection {
+    font-size: 13px;
+  }
+}
+
+/* Reducir animaciones si el usuario lo solicita */
+@media (prefers-reduced-motion: reduce) {
+  .player-table__row {
+    transition: none;
+  }
+}
