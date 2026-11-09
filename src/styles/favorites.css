@@ -1,0 +1,93 @@
+/* Contenedor de los contadores */
+.player-table__counts {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Contador de favoritos */
+.player-table__favorites-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #b77a21;
+  border-radius: 8px;
+  background-color: #3d3323;
+  color: #f5bb48;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Botón de estrella */
+.player-table__favorite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: 27px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Estrella desactivada */
+.player-table__favorite-button[aria-pressed="false"] {
+  color: #697586;
+}
+
+/* Estrella activada */
+.player-table__favorite-button[aria-pressed="true"] {
+  color: #be7100;
+}
+
+/* Efecto al pasar el cursor */
+.player-table__favorite-button:hover {
+  transform: scale(1.12);
+  background-color: rgba(245, 187, 72, 0.18);
+}
+
+/* Navegación mediante teclado */
+.player-table__favorite-button:focus-visible {
+  outline: 2px solid #b36b13;
+  outline-offset: 3px;
+}
+
+/* Mantener visible la estrella en filas coloreadas */
+.player-table__row--highlight-even
+.player-table__favorite-button[aria-pressed="true"],
+.player-table__row--highlight-odd
+.player-table__favorite-button[aria-pressed="true"] {
+  color: #a65d00;
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 700px) {
+  .player-table__counts {
+    justify-content: flex-start;
+  }
+
+  .player-table__favorites-count {
+    font-size: 12px;
+    padding: 7px 11px;
+  }
+}
+
+/* Respetar preferencias de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .player-table__favorite-button {
+    transition: none;
+  }
+}

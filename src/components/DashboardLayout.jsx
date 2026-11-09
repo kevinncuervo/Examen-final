@@ -1,4 +1,3 @@
-
 import SearchBar from './SearchBar';
 import SearchHistory from './SearchHistory';
 import StatsPanel from './StatsPanel';
@@ -24,7 +23,9 @@ function DashboardLayout({
   onPageChange,
   onItemsPerPageChange,
   rowColors,
-  onRowColorsChange
+  onRowColorsChange,
+  favoriteIds,
+  onToggleFavorite
 }) {
   return (
     <div className="dashboard">
@@ -88,6 +89,8 @@ function DashboardLayout({
             onSort={onSort}
             rowColors={rowColors}
             onRowColorsChange={onRowColorsChange}
+            favoriteIds={favoriteIds}
+            onToggleFavorite={onToggleFavorite}
           />
 
           <Pagination

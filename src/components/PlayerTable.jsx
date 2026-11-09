@@ -1,7 +1,7 @@
-
 import PlayerRow from './PlayerRow';
 import RowColorControls from './RowColorControls';
 import '../styles/player-table.css';
+import '../styles/favorites.css';
 
 const COLUMNS = [
   { key: 'name', label: 'JUGADOR' },
@@ -22,16 +22,17 @@ function PlayerTable({
   darkMode = true,
   rowColors = 'none',
   onRowColorsChange,
-  selectedPlayerId = null
+  selectedPlayerId = null,
+  favoriteIds = [],
+  onToggleFavorite
 }) {
-  // Identificar al jugador seleccionado
+  // Jugador seleccionado en la página actual
   const selectedPlayer = players.find(
     (player) => player.id === selectedPlayerId
   );
 
-  // Obtener la clase de color según la fila visible
+  // Colorear filas según su posición visible
   const getColorClass = (index) => {
-    // Las posiciones comienzan en 1
     const rowNumber = index + 1;
 
     if (rowColors === 'even' && rowNumber % 2 === 0) {
@@ -45,7 +46,7 @@ function PlayerTable({
     return '';
   };
 
-  // Indicador visual del ordenamiento
+  // Indicador de ordenamiento
   const getSortIndicator = (key) => {
     if (
       sortConfig.key !== key ||
@@ -61,7 +62,7 @@ function PlayerTable({
     return '▼';
   };
 
-  // Información para lectores de pantalla
+  // Dirección accesible del ordenamiento
   const getAriaSort = (key) => {
     if (sortConfig.key !== key) {
       return 'none';
@@ -98,10 +99,24 @@ function PlayerTable({
           Listado de jugadores
         </h2>
 
-        <span className="player-table__count">
-          {players.length}{' '}
-          {players.length === 1 ? 'jugador' : 'jugadores'}
-        </span>
+        <div className="player-table__counts">
+          <span className="player-table__count">
+            {players.length}{' '}
+            {players.length === 1 ? 'jugador' : 'jugadores'}
+            {' en esta página'}
+          </span>
+
+          <span
+            className="player-table__favorites-count"
+            role="status"
+            aria-live="polite"
+          >
+            ★ {favoriteIds.length}{' '}
+            {favoriteIds.length === 1
+              ? 'favorito'
+              : 'favoritos'}
+          </span>
+        </div>
       </div>
 
       <RowColorControls
@@ -163,6 +178,8 @@ function PlayerTable({
                   }
                   darkMode={darkMode}
                   colorClass={getColorClass(index)}
+                  isFavorite={favoriteIds.includes(player.id)}
+                  onToggleFavorite={onToggleFavorite}
                 />
               ))
             )}

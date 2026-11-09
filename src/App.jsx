@@ -1,9 +1,9 @@
-
 import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
 import { players } from './data/players';
 
 const HISTORY_KEY = 'top-club-soccer-search-history';
+const FAVORITES_KEY = 'top-club-soccer-favorites';
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
@@ -11,7 +11,11 @@ const POSITIONS = [
   ...new Set(players.map((player) => player.position))
 ];
 
-// Recuperar historial desde localStorage
+const VALID_PLAYER_IDS = new Set(
+  players.map((player) => player.id)
+);
+
+// Recuperar historial de búsquedas
 function loadSearchHistory() {
   try {
     const savedHistory = localStorage.getItem(HISTORY_KEY);
@@ -46,20 +50,49 @@ function loadSearchHistory() {
   }
 }
 
+// Recuperar favoritos almacenados
+function loadFavorites() {
+  try {
+    const savedFavorites = localStorage.getItem(FAVORITES_KEY);
+
+    if (!savedFavorites) {
+      return [];
+    }
+
+    const parsedFavorites = JSON.parse(savedFavorites);
+
+    if (!Array.isArray(parsedFavorites)) {
+      return [];
+    }
+
+    // Conservar solo IDs válidos y sin duplicados
+    return [...new Set(
+      parsedFavorites.filter((id) => VALID_PLAYER_IDS.has(id))
+    )];
+  } catch {
+    return [];
+  }
+}
+
 function App() {
   // Estados de búsqueda
   const [searchValue, setSearchValue] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  // Historial de búsquedas
+  // Historial
   const [searchHistory, setSearchHistory] = useState(
     loadSearchHistory
+  );
+
+  // Favoritos persistentes
+  const [favoriteIds, setFavoriteIds] = useState(
+    loadFavorites
   );
 
   // Jugador seleccionado
   const [selectedPlayerId, setSelectedPlayerId] = useState(null);
 
-  // Ordenamiento de columnas
+  // Ordenamiento
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: 'none'
@@ -69,7 +102,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
-  // Estado del coloreo de filas
+  // Coloreo de filas
   const [rowColors, setRowColors] = useState('none');
 
   // Debounce de 300 milisegundos
@@ -83,7 +116,7 @@ function App() {
     };
   }, [searchValue]);
 
-  // Buscar exclusivamente por nombre
+  // Filtrar jugadores por nombre
   const filteredPlayers = useMemo(() => {
     const normalizedSearch = debouncedSearch
       .trim()
@@ -163,7 +196,7 @@ function App() {
     };
   }, [filteredPlayers]);
 
-  // Ordenar jugadores después de filtrarlos
+  // Ordenar los jugadores filtrados
   const sortedPlayers = useMemo(() => {
     const { key, direction } = sortConfig;
 
@@ -209,7 +242,7 @@ function App() {
     return indexedPlayers.map(({ player }) => player);
   }, [filteredPlayers, sortConfig]);
 
-  // Lógica de paginación
+  // Paginación
   const totalItems = sortedPlayers.length;
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -257,7 +290,7 @@ function App() {
     }
   };
 
-  // Cambiar cantidad de jugadores por página
+  // Cambiar registros por página
   const handleItemsPerPageChange = (value) => {
     const newSize = Number(value);
 
@@ -269,7 +302,7 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Modificar búsqueda
+  // Cambiar búsqueda
   const handleSearchChange = (value) => {
     setSearchValue(value);
     setCurrentPage(1);
@@ -282,13 +315,13 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Recuperar búsqueda del historial
+  // Seleccionar una búsqueda del historial
   const handleSelectSearch = (search) => {
     setSearchValue(search);
     setCurrentPage(1);
   };
 
-  // Ordenar una columna
+  // Ordenar columnas
   const handleSort = (key) => {
     setSortConfig((previousConfig) => {
       if (previousConfig.key !== key) {
@@ -321,7 +354,7 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Registrar búsquedas en el historial
+  // Registrar búsquedas
   useEffect(() => {
     const newSearch = debouncedSearch.trim();
 
@@ -353,7 +386,7 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Persistencia del historial
+  // Guardar historial
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -361,9 +394,39 @@ function App() {
         JSON.stringify(searchHistory)
       );
     } catch {
-      // El buscador funciona sin almacenamiento.
+      // El buscador puede funcionar sin almacenamiento.
     }
   }, [searchHistory]);
+
+  // Guardar favoritos cuando cambien
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        FAVORITES_KEY,
+        JSON.stringify(favoriteIds)
+      );
+    } catch {
+      // Los favoritos siguen funcionando mientras
+      // la aplicación permanezca abierta.
+    }
+  }, [favoriteIds]);
+
+  // Agregar o quitar un jugador favorito
+  const handleToggleFavorite = (playerId) => {
+    if (!VALID_PLAYER_IDS.has(playerId)) {
+      return;
+    }
+
+    setFavoriteIds((previousFavorites) => {
+      if (previousFavorites.includes(playerId)) {
+        return previousFavorites.filter(
+          (id) => id !== playerId
+        );
+      }
+
+      return [...previousFavorites, playerId];
+    });
+  };
 
   // Limpiar historial
   const handleClearHistory = () => {
@@ -375,7 +438,7 @@ function App() {
     setSelectedPlayerId(player.id);
   };
 
-  // Actualizar coloreo
+  // Cambiar modo de coloreo
   const handleRowColorsChange = (mode) => {
     if (!['none', 'even', 'odd'].includes(mode)) {
       return;
@@ -404,6 +467,8 @@ function App() {
       onItemsPerPageChange={handleItemsPerPageChange}
       rowColors={rowColors}
       onRowColorsChange={handleRowColorsChange}
+      favoriteIds={favoriteIds}
+      onToggleFavorite={handleToggleFavorite}
     />
   );
 }
