@@ -1,6 +1,8 @@
+
 import SearchBar from './SearchBar';
 import SearchHistory from './SearchHistory';
 import StatsPanel from './StatsPanel';
+import FavoriteFilter from './FavoriteFilter';
 import PlayerTable from './PlayerTable';
 import Pagination from './Pagination';
 import '../styles/dashboard.css';
@@ -25,7 +27,9 @@ function DashboardLayout({
   rowColors,
   onRowColorsChange,
   favoriteIds,
-  onToggleFavorite
+  onToggleFavorite,
+  onlyFavorites,
+  onFavoritesFilterChange
 }) {
   return (
     <div className="dashboard">
@@ -80,6 +84,12 @@ function DashboardLayout({
         </section>
 
         <section className="dashboard__players">
+          <FavoriteFilter
+            onlyFavorites={onlyFavorites}
+            favoriteCount={favoriteIds.length}
+            onToggle={onFavoritesFilterChange}
+          />
+
           <PlayerTable
             players={players}
             onRowClick={onPlayerSelect}

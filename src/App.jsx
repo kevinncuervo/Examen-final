@@ -1,21 +1,26 @@
+
 import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
 import { players } from './data/players';
 
+// Claves de almacenamiento
 const HISTORY_KEY = 'top-club-soccer-search-history';
 const FAVORITES_KEY = 'top-club-soccer-favorites';
 
+// Cantidades de jugadores por página
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
+// Posiciones disponibles
 const POSITIONS = [
   ...new Set(players.map((player) => player.position))
 ];
 
+// Identificadores válidos de jugadores
 const VALID_PLAYER_IDS = new Set(
   players.map((player) => player.id)
 );
 
-// Recuperar historial de búsquedas
+// Recuperar historial desde localStorage
 function loadSearchHistory() {
   try {
     const savedHistory = localStorage.getItem(HISTORY_KEY);
@@ -50,7 +55,7 @@ function loadSearchHistory() {
   }
 }
 
-// Recuperar favoritos almacenados
+// Recuperar favoritos desde localStorage
 function loadFavorites() {
   try {
     const savedFavorites = localStorage.getItem(FAVORITES_KEY);
@@ -65,34 +70,40 @@ function loadFavorites() {
       return [];
     }
 
-    // Conservar solo IDs válidos y sin duplicados
-    return [...new Set(
-      parsedFavorites.filter((id) => VALID_PLAYER_IDS.has(id))
-    )];
+    return [
+      ...new Set(
+        parsedFavorites.filter((id) => (
+          VALID_PLAYER_IDS.has(id)
+        ))
+      )
+    ];
   } catch {
     return [];
   }
 }
 
 function App() {
-  // Estados de búsqueda
+  // Estados del buscador
   const [searchValue, setSearchValue] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  // Historial
+  // Historial de búsquedas
   const [searchHistory, setSearchHistory] = useState(
     loadSearchHistory
   );
 
-  // Favoritos persistentes
+  // Lista persistente de favoritos
   const [favoriteIds, setFavoriteIds] = useState(
     loadFavorites
   );
 
+  // Filtro para mostrar únicamente favoritos
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
+
   // Jugador seleccionado
   const [selectedPlayerId, setSelectedPlayerId] = useState(null);
 
-  // Ordenamiento
+  // Ordenamiento de columnas
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: 'none'
@@ -105,7 +116,7 @@ function App() {
   // Coloreo de filas
   const [rowColors, setRowColors] = useState('none');
 
-  // Debounce de 300 milisegundos
+  // Aplicar debounce de 300 milisegundos
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedSearch(searchValue);
@@ -116,24 +127,36 @@ function App() {
     };
   }, [searchValue]);
 
-  // Filtrar jugadores por nombre
+  // Filtrar por nombre y por favoritos
   const filteredPlayers = useMemo(() => {
     const normalizedSearch = debouncedSearch
       .trim()
       .toLocaleLowerCase('es');
 
     return players.filter((player) => {
+      // Buscar únicamente por nombre
       const normalizedName = player.name
         .toLocaleLowerCase('es');
 
-      return normalizedName.includes(normalizedSearch);
-    });
-  }, [debouncedSearch]);
+      const matchesSearch = normalizedName.includes(
+        normalizedSearch
+      );
 
-  // Estadísticas y distribución por posición
+      // Validar si debe mostrarse por favoritos
+      const matchesFavorites = (
+        !onlyFavorites ||
+        favoriteIds.includes(player.id)
+      );
+
+      return matchesSearch && matchesFavorites;
+    });
+  }, [debouncedSearch, onlyFavorites, favoriteIds]);
+
+  // Calcular estadísticas dinámicas
   const stats = useMemo(() => {
     const totalPlayers = filteredPlayers.length;
 
+    // Contar jugadores por posición
     const positionCounts = filteredPlayers.reduce(
       (counts, player) => {
         counts[player.position] =
@@ -144,6 +167,7 @@ function App() {
       {}
     );
 
+    // Calcular distribución por posición
     const positionDistribution = POSITIONS.map((position) => {
       const count = positionCounts[position] || 0;
 
@@ -158,6 +182,7 @@ function App() {
       };
     });
 
+    // Manejar conjuntos vacíos
     if (totalPlayers === 0) {
       return {
         totalPlayers: 0,
@@ -168,16 +193,19 @@ function App() {
       };
     }
 
+    // Sumar edades
     const totalAge = filteredPlayers.reduce(
       (total, player) => total + player.age,
       0
     );
 
+    // Sumar goles
     const totalGoals = filteredPlayers.reduce(
       (total, player) => total + player.goals,
       0
     );
 
+    // Encontrar máximo goleador
     const topScorer = filteredPlayers.reduce(
       (bestPlayer, currentPlayer) => (
         currentPlayer.goals > bestPlayer.goals
@@ -196,7 +224,7 @@ function App() {
     };
   }, [filteredPlayers]);
 
-  // Ordenar los jugadores filtrados
+  // Ordenar resultados filtrados
   const sortedPlayers = useMemo(() => {
     const { key, direction } = sortConfig;
 
@@ -206,6 +234,7 @@ function App() {
 
     const multiplier = direction === 'asc' ? 1 : -1;
 
+    // Conservar los índices originales
     const indexedPlayers = filteredPlayers.map(
       (player, index) => ({
         player,
@@ -219,12 +248,14 @@ function App() {
 
       let comparison = 0;
 
+      // Comparación numérica
       if (
         typeof firstValue === 'number' &&
         typeof secondValue === 'number'
       ) {
         comparison = firstValue - secondValue;
       } else {
+        // Comparación de textos
         comparison = String(firstValue).localeCompare(
           String(secondValue),
           'es',
@@ -232,6 +263,7 @@ function App() {
         );
       }
 
+      // Orden estable cuando hay empates
       if (comparison === 0) {
         return first.originalIndex - second.originalIndex;
       }
@@ -242,7 +274,7 @@ function App() {
     return indexedPlayers.map(({ player }) => player);
   }, [filteredPlayers, sortConfig]);
 
-  // Paginación
+  // Calcular paginación
   const totalItems = sortedPlayers.length;
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -254,6 +286,7 @@ function App() {
 
   const startIndex = (safeCurrentPage - 1) * itemsPerPage;
 
+  // Obtener jugadores de la página actual
   const paginatedPlayers = useMemo(() => {
     return sortedPlayers.slice(
       startIndex,
@@ -261,6 +294,7 @@ function App() {
     );
   }, [sortedPlayers, startIndex, itemsPerPage]);
 
+  // Calcular rango de registros
   const rangeStart = totalItems === 0
     ? 0
     : startIndex + 1;
@@ -290,7 +324,7 @@ function App() {
     }
   };
 
-  // Cambiar registros por página
+  // Cambiar cantidad de registros por página
   const handleItemsPerPageChange = (value) => {
     const newSize = Number(value);
 
@@ -302,7 +336,7 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Cambiar búsqueda
+  // Modificar búsqueda
   const handleSearchChange = (value) => {
     setSearchValue(value);
     setCurrentPage(1);
@@ -315,13 +349,19 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Seleccionar una búsqueda del historial
+  // Seleccionar búsqueda del historial
   const handleSelectSearch = (search) => {
     setSearchValue(search);
     setCurrentPage(1);
   };
 
-  // Ordenar columnas
+  // Activar o desactivar el filtro de favoritos
+  const handleFavoritesFilterChange = (value) => {
+    setOnlyFavorites(Boolean(value));
+    setCurrentPage(1);
+  };
+
+  // Cambiar ordenamiento
   const handleSort = (key) => {
     setSortConfig((previousConfig) => {
       if (previousConfig.key !== key) {
@@ -354,7 +394,7 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Registrar búsquedas
+  // Registrar búsquedas en historial
   useEffect(() => {
     const newSearch = debouncedSearch.trim();
 
@@ -386,7 +426,7 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Guardar historial
+  // Guardar historial de búsquedas
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -394,11 +434,11 @@ function App() {
         JSON.stringify(searchHistory)
       );
     } catch {
-      // El buscador puede funcionar sin almacenamiento.
+      // La aplicación funciona sin almacenamiento.
     }
   }, [searchHistory]);
 
-  // Guardar favoritos cuando cambien
+  // Persistir favoritos
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -406,12 +446,12 @@ function App() {
         JSON.stringify(favoriteIds)
       );
     } catch {
-      // Los favoritos siguen funcionando mientras
-      // la aplicación permanezca abierta.
+      // Los favoritos siguen disponibles
+      // mientras la aplicación está abierta.
     }
   }, [favoriteIds]);
 
-  // Agregar o quitar un jugador favorito
+  // Marcar o desmarcar favorito
   const handleToggleFavorite = (playerId) => {
     if (!VALID_PLAYER_IDS.has(playerId)) {
       return;
@@ -438,7 +478,7 @@ function App() {
     setSelectedPlayerId(player.id);
   };
 
-  // Cambiar modo de coloreo
+  // Cambiar coloreo de filas
   const handleRowColorsChange = (mode) => {
     if (!['none', 'even', 'odd'].includes(mode)) {
       return;
@@ -469,6 +509,8 @@ function App() {
       onRowColorsChange={handleRowColorsChange}
       favoriteIds={favoriteIds}
       onToggleFavorite={handleToggleFavorite}
+      onlyFavorites={onlyFavorites}
+      onFavoritesFilterChange={handleFavoritesFilterChange}
     />
   );
 }

@@ -1,0 +1,133 @@
+
+/* Contenedor principal */
+.favorite-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  width: 100%;
+  margin-bottom: 22px;
+  padding: 20px;
+  border: 1px solid #3a4758;
+  border-radius: 10px;
+  background-color: #283445;
+}
+
+/* Información del filtro */
+.favorite-filter__information {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.favorite-filter__title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.favorite-filter__description {
+  margin: 0;
+  color: #c5ced8;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Controles */
+.favorite-filter__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* Contador de favoritos */
+.favorite-filter__count {
+  color: #f5bb48;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Botón principal */
+.favorite-filter__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 11px 18px;
+  border: 1px solid #f5bb48;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #f5bb48;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* Efecto de interacción */
+.favorite-filter__button:hover {
+  background-color: rgba(245, 187, 72, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Estado activo */
+.favorite-filter__button--active {
+  border-color: #f5bb48;
+  background-color: #f5bb48;
+  color: #32210c;
+}
+
+.favorite-filter__button--active:hover {
+  background-color: #ffd274;
+}
+
+/* Navegación con teclado */
+.favorite-filter__button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* Adaptación a tabletas */
+@media (max-width: 900px) {
+  .favorite-filter {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .favorite-filter__actions {
+    justify-content: flex-start;
+  }
+}
+
+/* Adaptación a celulares */
+@media (max-width: 480px) {
+  .favorite-filter {
+    padding: 16px;
+  }
+
+  .favorite-filter__actions {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .favorite-filter__button {
+    width: 100%;
+  }
+}
+
+/* Preferencias de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .favorite-filter__button {
+    transition: none;
+  }
+}
