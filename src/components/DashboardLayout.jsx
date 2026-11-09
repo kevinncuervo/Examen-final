@@ -22,7 +22,9 @@ function DashboardLayout({
   onSort,
   pagination,
   onPageChange,
-  onItemsPerPageChange
+  onItemsPerPageChange,
+  rowColors,
+  onRowColorsChange
 }) {
   return (
     <div className="dashboard">
@@ -84,6 +86,8 @@ function DashboardLayout({
             darkMode={true}
             sortConfig={sortConfig}
             onSort={onSort}
+            rowColors={rowColors}
+            onRowColorsChange={onRowColorsChange}
           />
 
           <Pagination

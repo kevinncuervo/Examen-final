@@ -1,4 +1,6 @@
+
 import PlayerRow from './PlayerRow';
+import RowColorControls from './RowColorControls';
 import '../styles/player-table.css';
 
 const COLUMNS = [
@@ -19,6 +21,7 @@ function PlayerTable({
   sortConfig = { key: null, direction: 'none' },
   darkMode = true,
   rowColors = 'none',
+  onRowColorsChange,
   selectedPlayerId = null
 }) {
   // Identificar al jugador seleccionado
@@ -26,8 +29,9 @@ function PlayerTable({
     (player) => player.id === selectedPlayerId
   );
 
-  // Clases de coloreo para futuras funcionalidades
+  // Obtener la clase de color según la fila visible
   const getColorClass = (index) => {
+    // Las posiciones comienzan en 1
     const rowNumber = index + 1;
 
     if (rowColors === 'even' && rowNumber % 2 === 0) {
@@ -57,7 +61,7 @@ function PlayerTable({
     return '▼';
   };
 
-  // Dirección accesible para lectores de pantalla
+  // Información para lectores de pantalla
   const getAriaSort = (key) => {
     if (sortConfig.key !== key) {
       return 'none';
@@ -74,7 +78,7 @@ function PlayerTable({
     return 'none';
   };
 
-  // Descripción accesible de la siguiente acción
+  // Descripción del siguiente ordenamiento
   const getSortLabel = (column) => {
     if (sortConfig.key !== column.key) {
       return `Ordenar ${column.label} de forma ascendente`;
@@ -99,6 +103,11 @@ function PlayerTable({
           {players.length === 1 ? 'jugador' : 'jugadores'}
         </span>
       </div>
+
+      <RowColorControls
+        mode={rowColors}
+        onChange={onRowColorsChange}
+      />
 
       <div className="dashboard__table-container player-table__container">
         <table className="dashboard__table player-table__table">

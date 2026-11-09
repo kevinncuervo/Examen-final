@@ -3,18 +3,15 @@ import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
 import { players } from './data/players';
 
-// Clave del historial de búsquedas
 const HISTORY_KEY = 'top-club-soccer-search-history';
 
-// Cantidades permitidas por página
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
-// Posiciones disponibles
 const POSITIONS = [
   ...new Set(players.map((player) => player.position))
 ];
 
-// Recuperar el historial desde localStorage
+// Recuperar historial desde localStorage
 function loadSearchHistory() {
   try {
     const savedHistory = localStorage.getItem(HISTORY_KEY);
@@ -62,15 +59,18 @@ function App() {
   // Jugador seleccionado
   const [selectedPlayerId, setSelectedPlayerId] = useState(null);
 
-  // Configuración del ordenamiento
+  // Ordenamiento de columnas
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: 'none'
   });
 
-  // Estados de paginación
+  // Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  // Estado del coloreo de filas
+  const [rowColors, setRowColors] = useState('none');
 
   // Debounce de 300 milisegundos
   useEffect(() => {
@@ -83,7 +83,7 @@ function App() {
     };
   }, [searchValue]);
 
-  // Filtrar jugadores por nombre
+  // Buscar exclusivamente por nombre
   const filteredPlayers = useMemo(() => {
     const normalizedSearch = debouncedSearch
       .trim()
@@ -163,7 +163,7 @@ function App() {
     };
   }, [filteredPlayers]);
 
-  // Ordenar los jugadores filtrados
+  // Ordenar jugadores después de filtrarlos
   const sortedPlayers = useMemo(() => {
     const { key, direction } = sortConfig;
 
@@ -209,22 +209,18 @@ function App() {
     return indexedPlayers.map(({ player }) => player);
   }, [filteredPlayers, sortConfig]);
 
-  // Total de resultados después de aplicar filtros
+  // Lógica de paginación
   const totalItems = sortedPlayers.length;
 
-  // Calcular el número de páginas
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  // Mantener siempre una página válida
   const safeCurrentPage = Math.min(
     Math.max(1, currentPage),
     Math.max(1, totalPages)
   );
 
-  // Índice del primer jugador de la página
   const startIndex = (safeCurrentPage - 1) * itemsPerPage;
 
-  // Obtener los jugadores visibles
   const paginatedPlayers = useMemo(() => {
     return sortedPlayers.slice(
       startIndex,
@@ -232,7 +228,6 @@ function App() {
     );
   }, [sortedPlayers, startIndex, itemsPerPage]);
 
-  // Calcular el rango visible
   const rangeStart = totalItems === 0
     ? 0
     : startIndex + 1;
@@ -241,7 +236,6 @@ function App() {
     ? 0
     : Math.min(startIndex + itemsPerPage, totalItems);
 
-  // Información utilizada por la paginación
   const pagination = {
     currentPage: safeCurrentPage,
     totalPages,
@@ -251,7 +245,7 @@ function App() {
     rangeEnd
   };
 
-  // Cambiar la página actual
+  // Cambiar página
   const handlePageChange = (page) => {
     const validPage = Math.min(
       Math.max(1, Number(page)),
@@ -263,7 +257,7 @@ function App() {
     }
   };
 
-  // Cambiar la cantidad de jugadores por página
+  // Cambiar cantidad de jugadores por página
   const handleItemsPerPageChange = (value) => {
     const newSize = Number(value);
 
@@ -275,26 +269,26 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Modificar la búsqueda
+  // Modificar búsqueda
   const handleSearchChange = (value) => {
     setSearchValue(value);
     setCurrentPage(1);
   };
 
-  // Limpiar la búsqueda
+  // Limpiar búsqueda
   const handleClearSearch = () => {
     setSearchValue('');
     setDebouncedSearch('');
     setCurrentPage(1);
   };
 
-  // Recuperar una búsqueda anterior
+  // Recuperar búsqueda del historial
   const handleSelectSearch = (search) => {
     setSearchValue(search);
     setCurrentPage(1);
   };
 
-  // Cambiar el ordenamiento
+  // Ordenar una columna
   const handleSort = (key) => {
     setSortConfig((previousConfig) => {
       if (previousConfig.key !== key) {
@@ -327,7 +321,7 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Registrar nuevas búsquedas
+  // Registrar búsquedas en el historial
   useEffect(() => {
     const newSearch = debouncedSearch.trim();
 
@@ -359,7 +353,7 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Guardar historial en localStorage
+  // Persistencia del historial
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -367,8 +361,7 @@ function App() {
         JSON.stringify(searchHistory)
       );
     } catch {
-      // La aplicación sigue funcionando si
-      // el almacenamiento no está disponible.
+      // El buscador funciona sin almacenamiento.
     }
   }, [searchHistory]);
 
@@ -377,9 +370,18 @@ function App() {
     setSearchHistory([]);
   };
 
-  // Seleccionar un jugador de la tabla
+  // Seleccionar jugador
   const handleSelectPlayer = (player) => {
     setSelectedPlayerId(player.id);
+  };
+
+  // Actualizar coloreo
+  const handleRowColorsChange = (mode) => {
+    if (!['none', 'even', 'odd'].includes(mode)) {
+      return;
+    }
+
+    setRowColors(mode);
   };
 
   return (
@@ -400,6 +402,8 @@ function App() {
       pagination={pagination}
       onPageChange={handlePageChange}
       onItemsPerPageChange={handleItemsPerPageChange}
+      rowColors={rowColors}
+      onRowColorsChange={handleRowColorsChange}
     />
   );
 }
