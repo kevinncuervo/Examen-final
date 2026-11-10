@@ -10,8 +10,8 @@ import PlayerModal from './PlayerModal';
 import '../styles/dashboard.css';
 import '../styles/theme.css';
 import '../styles/responsive.css';
+import '../styles/accessibility.css';
 
-// Clave para guardar el tema
 const THEME_KEY = 'top-club-soccer-theme';
 
 // Recuperar el tema guardado
@@ -55,12 +55,12 @@ function DashboardLayout({
   selectedPlayer,
   onClosePlayerModal
 }) {
-  // Estado del tema
+  // Tema actual
   const [theme, setTheme] = useState(loadTheme);
 
   const darkMode = theme === 'dark';
 
-  // Actualizar el tema y guardarlo
+  // Aplicar y guardar el tema
   useEffect(() => {
     document.documentElement.setAttribute(
       'data-theme',
@@ -70,11 +70,11 @@ function DashboardLayout({
     try {
       localStorage.setItem(THEME_KEY, theme);
     } catch {
-      // Continuar con el tema de la sesión.
+      // Conservar el tema durante la sesión.
     }
   }, [theme]);
 
-  // Cambiar entre claro y oscuro
+  // Alternar entre claro y oscuro
   const handleToggleTheme = () => {
     setTheme((previousTheme) => (
       previousTheme === 'dark'
@@ -85,6 +85,13 @@ function DashboardLayout({
 
   return (
     <div className={`dashboard dashboard--${theme}`}>
+      <a
+        className="a11y-skip-link"
+        href="#dashboard-content"
+      >
+        Saltar al contenido principal
+      </a>
+
       <header className="dashboard__header">
         <div className="dashboard__branding">
           <h1 className="dashboard__brand">
@@ -127,8 +134,15 @@ function DashboardLayout({
         </button>
       </header>
 
-      <main className="dashboard__main">
-        <section className="dashboard__search">
+      <main
+        className="dashboard__main"
+        id="dashboard-content"
+        tabIndex={-1}
+      >
+        <section
+          className="dashboard__search"
+          aria-label="Búsqueda de jugadores"
+        >
           <SearchBar
             value={searchValue}
             onChange={onSearchChange}

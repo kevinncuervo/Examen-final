@@ -9,6 +9,7 @@ function PlayerRow({
   colorClass = '',
   isSelected = false
 }) {
+  // Clases CSS de la fila
   const rowClass = [
     'player-table__row',
     darkMode
@@ -17,22 +18,55 @@ function PlayerRow({
     index % 2 === 0
       ? 'player-table__row--even'
       : 'player-table__row--odd',
-    isSelected ? 'player-table__row--selected' : '',
+    isSelected
+      ? 'player-table__row--selected'
+      : '',
     colorClass
   ].filter(Boolean).join(' ');
 
+  // Abrir los detalles del jugador
+  const handleRowClick = () => {
+    onClick?.(player);
+  };
+
+  // Permitir abrir el jugador con teclado
+  const handleRowKeyDown = (event) => {
+    // No intervenir en las teclas de botones internos
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
+    if (!onClick) {
+      return;
+    }
+
+    if (
+      event.key === 'Enter' ||
+      event.key === ' '
+    ) {
+      event.preventDefault();
+      onClick(player);
+    }
+  };
+
+  // Marcar o desmarcar favorito
   const handleFavoriteClick = (event) => {
     event.stopPropagation();
 
-    if (onToggleFavorite) {
-      onToggleFavorite(player.id);
-    }
+    onToggleFavorite?.(player.id);
   };
 
   return (
     <tr
       className={rowClass}
-      onClick={() => onClick?.(player)}
+      onClick={handleRowClick}
+      onKeyDown={handleRowKeyDown}
+      tabIndex={onClick ? 0 : undefined}
+      aria-describedby={
+        onClick
+          ? 'player-table-keyboard-help'
+          : undefined
+      }
     >
       <td className="player-table__favorite-cell">
         {onToggleFavorite ? (
@@ -46,13 +80,20 @@ function PlayerRow({
                 : `Agregar ${player.name} a favoritos`
             }
             aria-pressed={isFavorite}
+            title={
+              isFavorite
+                ? 'Quitar de favoritos'
+                : 'Agregar a favoritos'
+            }
           >
-            {isFavorite ? '★' : '☆'}
+            <span aria-hidden="true">
+              {isFavorite ? '★' : '☆'}
+            </span>
           </button>
         ) : (
           <span
             className="player-table__favorite-placeholder"
-            title="Favoritos disponibles próximamente"
+            aria-hidden="true"
           >
             ☆
           </span>
@@ -67,7 +108,7 @@ function PlayerRow({
             event.stopPropagation();
             onClick?.(player);
           }}
-          aria-label={`Seleccionar a ${player.name}`}
+          aria-label={`Ver detalles de ${player.name}`}
         >
           {player.name}
         </button>
