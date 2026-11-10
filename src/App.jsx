@@ -2,15 +2,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
 import { players } from './data/players';
+import {
+  filterPlayers,
+  calculateStats,
+  sortPlayers,
+  getNextSortConfig,
+  paginatePlayers,
+  toggleFavoriteIds
+} from './utils/playerLogic.js';
 
-// Claves de almacenamiento
+// Claves utilizadas por localStorage
 const HISTORY_KEY = 'top-club-soccer-search-history';
 const FAVORITES_KEY = 'top-club-soccer-favorites';
 
-// Cantidades permitidas por página
+// Opciones de paginación
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
-// Posiciones disponibles
+// Posiciones originales
 const POSITIONS = [
   ...new Set(players.map((player) => player.position))
 ];
@@ -83,11 +91,11 @@ function loadFavorites() {
 }
 
 function App() {
-  // Búsqueda
+  // Buscador
   const [searchValue, setSearchValue] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  // Historial
+  // Historial de búsquedas
   const [searchHistory, setSearchHistory] = useState(
     loadSearchHistory
   );
@@ -100,7 +108,7 @@ function App() {
   // Filtro de favoritos
   const [onlyFavorites, setOnlyFavorites] = useState(false);
 
-  // Jugador seleccionado para el modal
+  // Jugador seleccionado
   const [selectedPlayerId, setSelectedPlayerId] = useState(null);
 
   // Ordenamiento
@@ -127,178 +135,42 @@ function App() {
     };
   }, [searchValue]);
 
-  // Buscar por nombre y filtrar favoritos
-  const filteredPlayers = useMemo(() => {
-    const normalizedSearch = debouncedSearch
-      .trim()
-      .toLocaleLowerCase('es');
+  // Aplicar búsqueda y filtro de favoritos
+  const filteredPlayers = useMemo(() => (
+    filterPlayers(
+      players,
+      debouncedSearch,
+      onlyFavorites,
+      favoriteIds
+    )
+  ), [debouncedSearch, onlyFavorites, favoriteIds]);
 
-    return players.filter((player) => {
-      const normalizedName = player.name
-        .toLocaleLowerCase('es');
+  // Estadísticas sobre todos los resultados filtrados
+  const stats = useMemo(() => (
+    calculateStats(filteredPlayers, POSITIONS)
+  ), [filteredPlayers]);
 
-      const matchesSearch = normalizedName.includes(
-        normalizedSearch
-      );
+  // Ordenar jugadores filtrados
+  const sortedPlayers = useMemo(() => (
+    sortPlayers(filteredPlayers, sortConfig)
+  ), [filteredPlayers, sortConfig]);
 
-      const matchesFavorites = (
-        !onlyFavorites ||
-        favoriteIds.includes(player.id)
-      );
+  // Paginar los resultados ya ordenados
+  const paginationResult = useMemo(() => (
+    paginatePlayers(
+      sortedPlayers,
+      currentPage,
+      itemsPerPage
+    )
+  ), [sortedPlayers, currentPage, itemsPerPage]);
 
-      return matchesSearch && matchesFavorites;
-    });
-  }, [debouncedSearch, onlyFavorites, favoriteIds]);
+  // Separar jugadores y datos de paginación
+  const {
+    items: paginatedPlayers,
+    ...pagination
+  } = paginationResult;
 
-  // Calcular estadísticas
-  const stats = useMemo(() => {
-    const totalPlayers = filteredPlayers.length;
-
-    const positionCounts = filteredPlayers.reduce(
-      (counts, player) => {
-        counts[player.position] =
-          (counts[player.position] || 0) + 1;
-
-        return counts;
-      },
-      {}
-    );
-
-    const positionDistribution = POSITIONS.map((position) => {
-      const count = positionCounts[position] || 0;
-
-      const percentage = totalPlayers === 0
-        ? 0
-        : (count / totalPlayers) * 100;
-
-      return {
-        position,
-        count,
-        percentage
-      };
-    });
-
-    if (totalPlayers === 0) {
-      return {
-        totalPlayers: 0,
-        averageAge: 0,
-        averageGoals: 0,
-        topScorer: null,
-        positionDistribution
-      };
-    }
-
-    const totalAge = filteredPlayers.reduce(
-      (total, player) => total + player.age,
-      0
-    );
-
-    const totalGoals = filteredPlayers.reduce(
-      (total, player) => total + player.goals,
-      0
-    );
-
-    const topScorer = filteredPlayers.reduce(
-      (bestPlayer, currentPlayer) => (
-        currentPlayer.goals > bestPlayer.goals
-          ? currentPlayer
-          : bestPlayer
-      ),
-      filteredPlayers[0]
-    );
-
-    return {
-      totalPlayers,
-      averageAge: totalAge / totalPlayers,
-      averageGoals: totalGoals / totalPlayers,
-      topScorer,
-      positionDistribution
-    };
-  }, [filteredPlayers]);
-
-  // Ordenar los jugadores filtrados
-  const sortedPlayers = useMemo(() => {
-    const { key, direction } = sortConfig;
-
-    if (key === null || direction === 'none') {
-      return filteredPlayers;
-    }
-
-    const multiplier = direction === 'asc' ? 1 : -1;
-
-    const indexedPlayers = filteredPlayers.map(
-      (player, index) => ({
-        player,
-        originalIndex: index
-      })
-    );
-
-    indexedPlayers.sort((first, second) => {
-      const firstValue = first.player[key];
-      const secondValue = second.player[key];
-
-      let comparison = 0;
-
-      if (
-        typeof firstValue === 'number' &&
-        typeof secondValue === 'number'
-      ) {
-        comparison = firstValue - secondValue;
-      } else {
-        comparison = String(firstValue).localeCompare(
-          String(secondValue),
-          'es',
-          { sensitivity: 'base' }
-        );
-      }
-
-      if (comparison === 0) {
-        return first.originalIndex - second.originalIndex;
-      }
-
-      return comparison * multiplier;
-    });
-
-    return indexedPlayers.map(({ player }) => player);
-  }, [filteredPlayers, sortConfig]);
-
-  // Lógica de paginación
-  const totalItems = sortedPlayers.length;
-
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  const safeCurrentPage = Math.min(
-    Math.max(1, currentPage),
-    Math.max(1, totalPages)
-  );
-
-  const startIndex = (safeCurrentPage - 1) * itemsPerPage;
-
-  const paginatedPlayers = useMemo(() => {
-    return sortedPlayers.slice(
-      startIndex,
-      startIndex + itemsPerPage
-    );
-  }, [sortedPlayers, startIndex, itemsPerPage]);
-
-  const rangeStart = totalItems === 0
-    ? 0
-    : startIndex + 1;
-
-  const rangeEnd = totalItems === 0
-    ? 0
-    : Math.min(startIndex + itemsPerPage, totalItems);
-
-  const pagination = {
-    currentPage: safeCurrentPage,
-    totalPages,
-    itemsPerPage,
-    totalItems,
-    rangeStart,
-    rangeEnd
-  };
-
-  // Recuperar los datos completos del jugador seleccionado
+  // Recuperar datos completos del jugador seleccionado
   const selectedPlayer = players.find(
     (player) => player.id === selectedPlayerId
   ) || null;
@@ -307,7 +179,7 @@ function App() {
   const handlePageChange = (page) => {
     const validPage = Math.min(
       Math.max(1, Number(page)),
-      Math.max(1, totalPages)
+      Math.max(1, pagination.totalPages)
     );
 
     if (Number.isFinite(validPage)) {
@@ -315,7 +187,7 @@ function App() {
     }
   };
 
-  // Cambiar cantidad de registros por página
+  // Cambiar cantidad de registros
   const handleItemsPerPageChange = (value) => {
     const newSize = Number(value);
 
@@ -340,7 +212,7 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Recuperar una búsqueda anterior
+  // Recuperar búsqueda anterior
   const handleSelectSearch = (search) => {
     setSearchValue(search);
     setCurrentPage(1);
@@ -352,40 +224,16 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Ordenar columnas
+  // Cambiar el ordenamiento de una columna
   const handleSort = (key) => {
-    setSortConfig((previousConfig) => {
-      if (previousConfig.key !== key) {
-        return {
-          key,
-          direction: 'asc'
-        };
-      }
-
-      if (previousConfig.direction === 'asc') {
-        return {
-          key,
-          direction: 'desc'
-        };
-      }
-
-      if (previousConfig.direction === 'desc') {
-        return {
-          key: null,
-          direction: 'none'
-        };
-      }
-
-      return {
-        key,
-        direction: 'asc'
-      };
-    });
+    setSortConfig((previousConfig) => (
+      getNextSortConfig(previousConfig, key)
+    ));
 
     setCurrentPage(1);
   };
 
-  // Registrar búsquedas en el historial
+  // Registrar búsquedas después del debounce
   useEffect(() => {
     const newSearch = debouncedSearch.trim();
 
@@ -425,11 +273,11 @@ function App() {
         JSON.stringify(searchHistory)
       );
     } catch {
-      // La aplicación puede continuar sin almacenamiento.
+      // El buscador funciona sin almacenamiento.
     }
   }, [searchHistory]);
 
-  // Guardar favoritos
+  // Persistir favoritos
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -437,25 +285,19 @@ function App() {
         JSON.stringify(favoriteIds)
       );
     } catch {
-      // Los favoritos continúan en memoria.
+      // Los favoritos continúan durante la sesión.
     }
   }, [favoriteIds]);
 
-  // Marcar o desmarcar favorito
+  // Marcar o desmarcar favoritos
   const handleToggleFavorite = (playerId) => {
-    if (!VALID_PLAYER_IDS.has(playerId)) {
-      return;
-    }
-
-    setFavoriteIds((previousFavorites) => {
-      if (previousFavorites.includes(playerId)) {
-        return previousFavorites.filter(
-          (id) => id !== playerId
-        );
-      }
-
-      return [...previousFavorites, playerId];
-    });
+    setFavoriteIds((previousFavorites) => (
+      toggleFavoriteIds(
+        previousFavorites,
+        playerId,
+        VALID_PLAYER_IDS
+      )
+    ));
   };
 
   // Limpiar historial
@@ -463,7 +305,7 @@ function App() {
     setSearchHistory([]);
   };
 
-  // Abrir el modal con un jugador
+  // Seleccionar un jugador para abrir el modal
   const handleSelectPlayer = (player) => {
     setSelectedPlayerId(player.id);
   };
@@ -473,7 +315,7 @@ function App() {
     setSelectedPlayerId(null);
   };
 
-  // Cambiar coloreo
+  // Cambiar coloreo de filas
   const handleRowColorsChange = (mode) => {
     if (!['none', 'even', 'odd'].includes(mode)) {
       return;
