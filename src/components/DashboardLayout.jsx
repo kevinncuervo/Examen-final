@@ -9,11 +9,12 @@ import Pagination from './Pagination';
 import PlayerModal from './PlayerModal';
 import '../styles/dashboard.css';
 import '../styles/theme.css';
+import '../styles/responsive.css';
 
-// Clave para guardar el tema seleccionado
+// Clave para guardar el tema
 const THEME_KEY = 'top-club-soccer-theme';
 
-// Recuperar el tema guardado en el navegador
+// Recuperar el tema guardado
 function loadTheme() {
   try {
     const savedTheme = localStorage.getItem(THEME_KEY);
@@ -54,13 +55,12 @@ function DashboardLayout({
   selectedPlayer,
   onClosePlayerModal
 }) {
-  // Estado del tema actual
+  // Estado del tema
   const [theme, setTheme] = useState(loadTheme);
 
-  // Determinar si está activo el tema oscuro
   const darkMode = theme === 'dark';
 
-  // Aplicar el tema al documento y guardarlo
+  // Actualizar el tema y guardarlo
   useEffect(() => {
     document.documentElement.setAttribute(
       'data-theme',
@@ -70,12 +70,11 @@ function DashboardLayout({
     try {
       localStorage.setItem(THEME_KEY, theme);
     } catch {
-      // El cambio funciona durante la sesión,
-      // aunque localStorage esté deshabilitado.
+      // Continuar con el tema de la sesión.
     }
   }, [theme]);
 
-  // Cambiar entre tema claro y oscuro
+  // Cambiar entre claro y oscuro
   const handleToggleTheme = () => {
     setTheme((previousTheme) => (
       previousTheme === 'dark'

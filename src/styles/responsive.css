@@ -1,0 +1,624 @@
+
+/* ==========================================
+   TOP CLUB SOCCER
+   DISEÑO RESPONSIVE GENERAL
+   ========================================== */
+
+/* Evitar desbordamientos por elementos flex y grid */
+#root {
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard {
+  width: min(100%, 1200px);
+  min-width: 0;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.dashboard__main,
+.dashboard__search,
+.dashboard__stats,
+.dashboard__history,
+.dashboard__players,
+.stats-panel,
+.position-distribution,
+.player-table,
+.pagination {
+  min-width: 0;
+}
+
+/* Mantener la tabla desplazable horizontalmente */
+.dashboard__table-container,
+.player-table__container {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Conservar todas las columnas de jugadores */
+.player-table__table {
+  width: 100%;
+  min-width: 950px;
+}
+
+/* Evitar que textos largos rompan las tarjetas */
+.stats-panel__card,
+.position-distribution,
+.favorite-filter,
+.search-history,
+.row-colors {
+  min-width: 0;
+}
+
+.stats-panel__value,
+.player-modal__title {
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   PORTÁTILES PEQUEÑOS
+   Máximo 1100 px
+   ========================================== */
+
+@media (max-width: 1100px) {
+  .dashboard {
+    max-width: 100%;
+  }
+
+  .dashboard__header {
+    padding: 30px;
+    gap: 20px;
+  }
+
+  .dashboard__main {
+    padding: 28px;
+  }
+
+  .stats-panel__grid {
+    gap: 14px;
+  }
+
+  .stats-panel__card {
+    padding: 20px 14px;
+  }
+
+  .position-distribution {
+    padding: 20px;
+  }
+
+  .dashboard__table-container,
+  .player-table__container {
+    border-radius: 8px;
+  }
+}
+
+/* ==========================================
+   TABLETAS
+   Máximo 900 px
+   ========================================== */
+
+@media (max-width: 900px) {
+  .dashboard__header {
+    padding: 26px;
+  }
+
+  .dashboard__main {
+    padding: 24px;
+  }
+
+  /* Dos tarjetas por fila */
+  .stats-panel__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .stats-panel__card {
+    min-height: 135px;
+  }
+
+  /* Encabezados y contadores */
+  .player-table__header,
+  .search-history__header,
+  .position-distribution__header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .favorite-filter {
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .favorite-filter__actions {
+    justify-content: flex-start;
+  }
+
+  /* Navegación */
+  .pagination {
+    padding: 18px;
+  }
+
+  .pagination__information {
+    justify-content: space-between;
+  }
+
+  .pagination__navigation {
+    gap: 7px;
+  }
+}
+
+/* ==========================================
+   TABLETAS VERTICALES Y CELULARES GRANDES
+   Máximo 768 px
+   ========================================== */
+
+@media (max-width: 768px) {
+  /* Encabezado en distribución vertical */
+  .dashboard__header {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+    padding: 24px;
+  }
+
+  .dashboard__branding {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dashboard__brand {
+    overflow-wrap: anywhere;
+  }
+
+  .dashboard__title {
+    font-size: 25px;
+    line-height: 1.25;
+  }
+
+  .dashboard__description {
+    line-height: 1.6;
+  }
+
+  .dashboard__theme-button {
+    align-self: flex-start;
+    min-height: 44px;
+  }
+
+  .dashboard__main {
+    padding: 22px;
+  }
+
+  /* Buscador de ancho completo */
+  .dashboard__search,
+  .search-bar,
+  .search-bar__input,
+  .dashboard__search-input {
+    max-width: 100%;
+  }
+
+  .search-bar__input,
+  .dashboard__search-input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Contadores de tabla */
+  .player-table__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .player-table__counts {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  /* Filtro de favoritos */
+  .favorite-filter {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .favorite-filter__actions {
+    width: 100%;
+  }
+
+  /* Modal adaptable a la altura */
+  .player-modal__overlay {
+    padding: 12px;
+  }
+
+  .player-modal__dialog {
+    width: 100%;
+    max-width: 620px;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+  }
+}
+
+/* ==========================================
+   CELULARES
+   Máximo 600 px
+   ========================================== */
+
+@media (max-width: 600px) {
+  .dashboard__header {
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .dashboard__brand {
+    font-size: 15px;
+    letter-spacing: 0.4px;
+  }
+
+  .dashboard__title {
+    font-size: 23px;
+  }
+
+  .dashboard__description {
+    font-size: 13px;
+  }
+
+  .dashboard__main {
+    padding: 18px;
+  }
+
+  /* Espaciado entre secciones */
+  .dashboard__search,
+  .dashboard__stats,
+  .dashboard__history,
+  .dashboard__players {
+    margin-bottom: 20px;
+  }
+
+  /* Mantener estadísticas en dos columnas
+     mientras exista espacio suficiente */
+  .stats-panel__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .stats-panel__card {
+    min-height: 125px;
+    padding: 15px 10px;
+  }
+
+  .stats-panel__label {
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .stats-panel__value {
+    font-size: 24px;
+  }
+
+  .stats-panel__value--player {
+    font-size: 16px;
+  }
+
+  /* Gráfico de distribución */
+  .position-distribution {
+    margin-top: 18px;
+    padding: 16px;
+  }
+
+  .position-distribution__header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .position-distribution__list {
+    gap: 18px;
+  }
+
+  .position-distribution__info {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* Historial */
+  .dashboard__history {
+    padding: 16px;
+  }
+
+  .search-history__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .search-history__list {
+    gap: 8px;
+  }
+
+  .search-history__button {
+    min-height: 42px;
+  }
+
+  /* Filtro de favoritos */
+  .favorite-filter {
+    padding: 16px;
+  }
+
+  .favorite-filter__actions {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .favorite-filter__button {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Controles de coloreo */
+  .row-colors {
+    padding: 16px;
+  }
+
+  .row-colors__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .row-colors__buttons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .row-colors__button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 8px;
+  }
+
+  .row-colors__button--clear {
+    grid-column: 1 / -1;
+  }
+
+  /* Tabla horizontalmente desplazable */
+  .player-table__container {
+    overflow-x: auto;
+  }
+
+  .player-table__table {
+    min-width: 950px;
+  }
+
+  /* Paginación */
+  .pagination {
+    padding: 15px;
+    gap: 16px;
+  }
+
+  .pagination__information {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pagination__navigation {
+    justify-content: center;
+    gap: 7px;
+  }
+
+  .pagination__button,
+  .pagination__page-button {
+    min-height: 40px;
+  }
+
+  /* Modal */
+  .player-modal__header {
+    padding: 18px;
+  }
+
+  .player-modal__body {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .player-modal__details {
+    grid-template-columns: 1fr;
+  }
+
+  .player-modal__stats {
+    gap: 7px;
+  }
+}
+
+/* ==========================================
+   CELULARES PEQUEÑOS
+   Máximo 480 px
+   ========================================== */
+
+@media (max-width: 480px) {
+  .dashboard__header {
+    padding: 18px 15px;
+  }
+
+  .dashboard__main {
+    padding: 15px;
+  }
+
+  .dashboard__title {
+    font-size: 21px;
+  }
+
+  .dashboard__theme-button {
+    width: 100%;
+  }
+
+  /* Evitar zoom automático del input en iOS */
+  .search-bar__input,
+  .dashboard__search-input {
+    font-size: 16px;
+  }
+
+  /* Una tarjeta por fila */
+  .stats-panel__grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stats-panel__card {
+    min-height: 105px;
+    padding: 16px;
+  }
+
+  .stats-panel__value {
+    font-size: 26px;
+  }
+
+  .stats-panel__value--player {
+    font-size: 18px;
+  }
+
+  .dashboard__history,
+  .favorite-filter,
+  .row-colors,
+  .position-distribution {
+    padding: 14px;
+  }
+
+  /* Contadores adaptables */
+  .player-table__counts {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .player-table__count,
+  .player-table__favorites-count {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  /* Botones grandes para interacción táctil */
+  .player-table__favorite-button {
+    min-width: 40px;
+    min-height: 44px;
+  }
+
+  /* Paginación en varias líneas */
+  .pagination__navigation {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pagination__button {
+    flex: 1 1 auto;
+    min-height: 44px;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .pagination__pages {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .pagination__page-button {
+    min-width: 38px;
+    min-height: 44px;
+  }
+
+  /* Modal con poco espacio lateral */
+  .player-modal__overlay {
+    padding: 10px;
+  }
+
+  .player-modal__dialog {
+    max-height: calc(100vh - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .player-modal__title {
+    font-size: 21px;
+  }
+
+  .player-modal__footer {
+    padding: 14px;
+  }
+
+  .player-modal__footer-button {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* ==========================================
+   PANTALLAS MUY PEQUEÑAS
+   Máximo 380 px
+   ========================================== */
+
+@media (max-width: 380px) {
+  .dashboard__main {
+    padding: 12px;
+  }
+
+  .dashboard__header {
+    padding: 16px 12px;
+  }
+
+  .dashboard__title {
+    font-size: 20px;
+  }
+
+  .row-colors__buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .row-colors__button--clear {
+    grid-column: auto;
+  }
+
+  /* Navegación de página más compacta */
+  .pagination__navigation {
+    gap: 5px;
+  }
+
+  .pagination__button {
+    font-size: 11px;
+  }
+
+  .pagination__page-info {
+    font-size: 12px;
+  }
+
+  .player-modal__identity {
+    align-items: flex-start;
+  }
+
+  .player-modal__avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 18px;
+  }
+
+  .player-modal__player-name {
+    font-size: 17px;
+  }
+}
+
+/* ==========================================
+   ACCESIBILIDAD: MOVIMIENTO REDUCIDO
+   ========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard__theme-button,
+  .stats-panel__card,
+  .row-colors__button,
+  .pagination__button,
+  .player-table__row {
+    transition: none;
+  }
+}
