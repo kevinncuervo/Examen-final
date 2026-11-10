@@ -1,0 +1,342 @@
+
+/* Fondo de la ventana emergente */
+.player-modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Área exterior que permite cerrar */
+.player-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background-color: rgba(6, 12, 22, 0.82);
+  cursor: default;
+}
+
+/* Contenedor principal del modal */
+.player-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 620px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  border: 1px solid #465365;
+  border-radius: 14px;
+  background-color: #1c2533;
+  color: #ffffff;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+}
+
+/* Encabezado */
+.player-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 25px;
+  background: linear-gradient(
+    120deg,
+    #67351e,
+    #d66a22
+  );
+}
+
+/* Información del título */
+.player-modal__heading {
+  min-width: 0;
+}
+
+.player-modal__eyebrow {
+  color: #ffe2ba;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.player-modal__title {
+  margin: 10px 0;
+  color: #ffffff;
+  font-size: 26px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.player-modal__subtitle {
+  margin: 0;
+  color: #fff1e0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Botón de cierre */
+.player-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 37px;
+  height: 37px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background-color: #f5bb48;
+  color: #32210c;
+  font-family: inherit;
+  font-size: 27px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.player-modal__close:hover {
+  background-color: #ffd274;
+}
+
+/* Contenido interior */
+.player-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 25px;
+}
+
+/* Presentación del jugador */
+.player-modal__identity {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #3a4758;
+}
+
+/* Avatar de iniciales */
+.player-modal__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 75px;
+  height: 75px;
+  border: 2px solid #f5bb48;
+  border-radius: 50%;
+  background-color: #354357;
+  color: #f5bb48;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+/* Nombre y club */
+.player-modal__identity-info {
+  min-width: 0;
+}
+
+.player-modal__player-name {
+  margin: 0 0 7px;
+  color: #ffffff;
+  font-size: 20px;
+  overflow-wrap: anywhere;
+}
+
+.player-modal__club {
+  margin: 0 0 10px;
+  color: #c5ced8;
+  font-size: 14px;
+}
+
+.player-modal__position {
+  display: inline-block;
+  padding: 6px 11px;
+  border-radius: 6px;
+  background-color: #394759;
+  color: #f5bb48;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Títulos de secciones */
+.player-modal__section-title {
+  margin: 0;
+  color: #f5bb48;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* Cuadrícula de información */
+.player-modal__details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.player-modal__detail {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #3a4758;
+  border-radius: 8px;
+  background-color: #283445;
+}
+
+.player-modal__detail-label {
+  margin-bottom: 8px;
+  color: #aab4c1;
+  font-size: 12px;
+}
+
+.player-modal__detail-value {
+  margin: 0;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* Estadísticas */
+.player-modal__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.player-modal__stat {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-height: 100px;
+  padding: 15px 8px;
+  border: 1px solid #465365;
+  border-radius: 10px;
+  background-color: #283445;
+  text-align: center;
+}
+
+.player-modal__stat-value {
+  color: #f5bb48;
+  font-size: 27px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.player-modal__stat-label {
+  color: #c5ced8;
+  font-size: 12px;
+}
+
+/* Estado del favorito */
+.player-modal__favorite-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border: 1px solid #465365;
+  border-radius: 8px;
+  background-color: #283445;
+  color: #c5ced8;
+  font-size: 13px;
+}
+
+.player-modal__favorite-icon {
+  color: #f5bb48;
+  font-size: 22px;
+}
+
+/* Pie de la ventana */
+.player-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 18px 25px;
+  border-top: 1px solid #3a4758;
+}
+
+/* Botón inferior */
+.player-modal__footer-button {
+  min-width: 110px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 7px;
+  background-color: #f5bb48;
+  color: #32210c;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.player-modal__footer-button:hover {
+  background-color: #ffd274;
+}
+
+/* Accesibilidad básica de botones */
+.player-modal__close:focus-visible,
+.player-modal__footer-button:focus-visible,
+.player-modal__backdrop:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* Adaptación a celulares */
+@media (max-width: 600px) {
+  .player-modal__overlay {
+    padding: 12px;
+  }
+
+  .player-modal__dialog {
+    max-height: calc(100vh - 24px);
+  }
+
+  .player-modal__header {
+    padding: 20px;
+  }
+
+  .player-modal__title {
+    font-size: 22px;
+  }
+
+  .player-modal__body {
+    padding: 18px;
+    gap: 18px;
+  }
+
+  .player-modal__identity {
+    gap: 12px;
+  }
+
+  .player-modal__avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 20px;
+  }
+
+  .player-modal__details {
+    grid-template-columns: 1fr;
+  }
+
+  .player-modal__stats {
+    gap: 7px;
+  }
+
+  .player-modal__stat {
+    padding: 12px 4px;
+  }
+
+  .player-modal__stat-value {
+    font-size: 23px;
+  }
+
+  .player-modal__footer {
+    padding: 15px 18px;
+  }
+}

@@ -5,6 +5,7 @@ import StatsPanel from './StatsPanel';
 import FavoriteFilter from './FavoriteFilter';
 import PlayerTable from './PlayerTable';
 import Pagination from './Pagination';
+import PlayerModal from './PlayerModal';
 import '../styles/dashboard.css';
 
 function DashboardLayout({
@@ -29,7 +30,9 @@ function DashboardLayout({
   favoriteIds,
   onToggleFavorite,
   onlyFavorites,
-  onFavoritesFilterChange
+  onFavoritesFilterChange,
+  selectedPlayer,
+  onClosePlayerModal
 }) {
   return (
     <div className="dashboard">
@@ -113,6 +116,14 @@ function DashboardLayout({
           />
         </section>
       </main>
+
+      {selectedPlayer && (
+        <PlayerModal
+          player={selectedPlayer}
+          isFavorite={favoriteIds.includes(selectedPlayer.id)}
+          onClose={onClosePlayerModal}
+        />
+      )}
     </div>
   );
 }

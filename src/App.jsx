@@ -7,7 +7,7 @@ import { players } from './data/players';
 const HISTORY_KEY = 'top-club-soccer-search-history';
 const FAVORITES_KEY = 'top-club-soccer-favorites';
 
-// Cantidades de jugadores por página
+// Cantidades permitidas por página
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
 // Posiciones disponibles
@@ -15,12 +15,12 @@ const POSITIONS = [
   ...new Set(players.map((player) => player.position))
 ];
 
-// Identificadores válidos de jugadores
+// Identificadores válidos
 const VALID_PLAYER_IDS = new Set(
   players.map((player) => player.id)
 );
 
-// Recuperar historial desde localStorage
+// Recuperar historial de búsquedas
 function loadSearchHistory() {
   try {
     const savedHistory = localStorage.getItem(HISTORY_KEY);
@@ -55,7 +55,7 @@ function loadSearchHistory() {
   }
 }
 
-// Recuperar favoritos desde localStorage
+// Recuperar favoritos guardados
 function loadFavorites() {
   try {
     const savedFavorites = localStorage.getItem(FAVORITES_KEY);
@@ -83,27 +83,27 @@ function loadFavorites() {
 }
 
 function App() {
-  // Estados del buscador
+  // Búsqueda
   const [searchValue, setSearchValue] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  // Historial de búsquedas
+  // Historial
   const [searchHistory, setSearchHistory] = useState(
     loadSearchHistory
   );
 
-  // Lista persistente de favoritos
+  // Favoritos
   const [favoriteIds, setFavoriteIds] = useState(
     loadFavorites
   );
 
-  // Filtro para mostrar únicamente favoritos
+  // Filtro de favoritos
   const [onlyFavorites, setOnlyFavorites] = useState(false);
 
-  // Jugador seleccionado
+  // Jugador seleccionado para el modal
   const [selectedPlayerId, setSelectedPlayerId] = useState(null);
 
-  // Ordenamiento de columnas
+  // Ordenamiento
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: 'none'
@@ -116,7 +116,7 @@ function App() {
   // Coloreo de filas
   const [rowColors, setRowColors] = useState('none');
 
-  // Aplicar debounce de 300 milisegundos
+  // Debounce de 300 milisegundos
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedSearch(searchValue);
@@ -127,14 +127,13 @@ function App() {
     };
   }, [searchValue]);
 
-  // Filtrar por nombre y por favoritos
+  // Buscar por nombre y filtrar favoritos
   const filteredPlayers = useMemo(() => {
     const normalizedSearch = debouncedSearch
       .trim()
       .toLocaleLowerCase('es');
 
     return players.filter((player) => {
-      // Buscar únicamente por nombre
       const normalizedName = player.name
         .toLocaleLowerCase('es');
 
@@ -142,7 +141,6 @@ function App() {
         normalizedSearch
       );
 
-      // Validar si debe mostrarse por favoritos
       const matchesFavorites = (
         !onlyFavorites ||
         favoriteIds.includes(player.id)
@@ -152,11 +150,10 @@ function App() {
     });
   }, [debouncedSearch, onlyFavorites, favoriteIds]);
 
-  // Calcular estadísticas dinámicas
+  // Calcular estadísticas
   const stats = useMemo(() => {
     const totalPlayers = filteredPlayers.length;
 
-    // Contar jugadores por posición
     const positionCounts = filteredPlayers.reduce(
       (counts, player) => {
         counts[player.position] =
@@ -167,7 +164,6 @@ function App() {
       {}
     );
 
-    // Calcular distribución por posición
     const positionDistribution = POSITIONS.map((position) => {
       const count = positionCounts[position] || 0;
 
@@ -182,7 +178,6 @@ function App() {
       };
     });
 
-    // Manejar conjuntos vacíos
     if (totalPlayers === 0) {
       return {
         totalPlayers: 0,
@@ -193,19 +188,16 @@ function App() {
       };
     }
 
-    // Sumar edades
     const totalAge = filteredPlayers.reduce(
       (total, player) => total + player.age,
       0
     );
 
-    // Sumar goles
     const totalGoals = filteredPlayers.reduce(
       (total, player) => total + player.goals,
       0
     );
 
-    // Encontrar máximo goleador
     const topScorer = filteredPlayers.reduce(
       (bestPlayer, currentPlayer) => (
         currentPlayer.goals > bestPlayer.goals
@@ -224,7 +216,7 @@ function App() {
     };
   }, [filteredPlayers]);
 
-  // Ordenar resultados filtrados
+  // Ordenar los jugadores filtrados
   const sortedPlayers = useMemo(() => {
     const { key, direction } = sortConfig;
 
@@ -234,7 +226,6 @@ function App() {
 
     const multiplier = direction === 'asc' ? 1 : -1;
 
-    // Conservar los índices originales
     const indexedPlayers = filteredPlayers.map(
       (player, index) => ({
         player,
@@ -248,14 +239,12 @@ function App() {
 
       let comparison = 0;
 
-      // Comparación numérica
       if (
         typeof firstValue === 'number' &&
         typeof secondValue === 'number'
       ) {
         comparison = firstValue - secondValue;
       } else {
-        // Comparación de textos
         comparison = String(firstValue).localeCompare(
           String(secondValue),
           'es',
@@ -263,7 +252,6 @@ function App() {
         );
       }
 
-      // Orden estable cuando hay empates
       if (comparison === 0) {
         return first.originalIndex - second.originalIndex;
       }
@@ -274,7 +262,7 @@ function App() {
     return indexedPlayers.map(({ player }) => player);
   }, [filteredPlayers, sortConfig]);
 
-  // Calcular paginación
+  // Lógica de paginación
   const totalItems = sortedPlayers.length;
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -286,7 +274,6 @@ function App() {
 
   const startIndex = (safeCurrentPage - 1) * itemsPerPage;
 
-  // Obtener jugadores de la página actual
   const paginatedPlayers = useMemo(() => {
     return sortedPlayers.slice(
       startIndex,
@@ -294,7 +281,6 @@ function App() {
     );
   }, [sortedPlayers, startIndex, itemsPerPage]);
 
-  // Calcular rango de registros
   const rangeStart = totalItems === 0
     ? 0
     : startIndex + 1;
@@ -311,6 +297,11 @@ function App() {
     rangeStart,
     rangeEnd
   };
+
+  // Recuperar los datos completos del jugador seleccionado
+  const selectedPlayer = players.find(
+    (player) => player.id === selectedPlayerId
+  ) || null;
 
   // Cambiar página
   const handlePageChange = (page) => {
@@ -349,19 +340,19 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Seleccionar búsqueda del historial
+  // Recuperar una búsqueda anterior
   const handleSelectSearch = (search) => {
     setSearchValue(search);
     setCurrentPage(1);
   };
 
-  // Activar o desactivar el filtro de favoritos
+  // Activar o desactivar Solo favoritos
   const handleFavoritesFilterChange = (value) => {
     setOnlyFavorites(Boolean(value));
     setCurrentPage(1);
   };
 
-  // Cambiar ordenamiento
+  // Ordenar columnas
   const handleSort = (key) => {
     setSortConfig((previousConfig) => {
       if (previousConfig.key !== key) {
@@ -394,7 +385,7 @@ function App() {
     setCurrentPage(1);
   };
 
-  // Registrar búsquedas en historial
+  // Registrar búsquedas en el historial
   useEffect(() => {
     const newSearch = debouncedSearch.trim();
 
@@ -426,7 +417,7 @@ function App() {
     });
   }, [debouncedSearch]);
 
-  // Guardar historial de búsquedas
+  // Guardar historial
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -434,11 +425,11 @@ function App() {
         JSON.stringify(searchHistory)
       );
     } catch {
-      // La aplicación funciona sin almacenamiento.
+      // La aplicación puede continuar sin almacenamiento.
     }
   }, [searchHistory]);
 
-  // Persistir favoritos
+  // Guardar favoritos
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -446,8 +437,7 @@ function App() {
         JSON.stringify(favoriteIds)
       );
     } catch {
-      // Los favoritos siguen disponibles
-      // mientras la aplicación está abierta.
+      // Los favoritos continúan en memoria.
     }
   }, [favoriteIds]);
 
@@ -473,12 +463,17 @@ function App() {
     setSearchHistory([]);
   };
 
-  // Seleccionar jugador
+  // Abrir el modal con un jugador
   const handleSelectPlayer = (player) => {
     setSelectedPlayerId(player.id);
   };
 
-  // Cambiar coloreo de filas
+  // Cerrar el modal
+  const handleClosePlayerModal = () => {
+    setSelectedPlayerId(null);
+  };
+
+  // Cambiar coloreo
   const handleRowColorsChange = (mode) => {
     if (!['none', 'even', 'odd'].includes(mode)) {
       return;
@@ -511,6 +506,8 @@ function App() {
       onToggleFavorite={handleToggleFavorite}
       onlyFavorites={onlyFavorites}
       onFavoritesFilterChange={handleFavoritesFilterChange}
+      selectedPlayer={selectedPlayer}
+      onClosePlayerModal={handleClosePlayerModal}
     />
   );
 }
