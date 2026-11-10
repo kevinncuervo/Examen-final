@@ -1,0 +1,18 @@
+
+# ==========================================
+# TOP CLUB SOCCER
+# Configuracion de despliegue en Netlify
+# ==========================================
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Redireccion interna para aplicaciones SPA.
+# Permite que las rutas gestionadas por React
+# carguen correctamente al actualizar la pagina.
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
