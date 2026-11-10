@@ -1,5 +1,8 @@
 
-/* Fondo de la ventana emergente */
+/* ======================================
+   FONDO DEL MODAL
+   ====================================== */
+
 .player-modal__overlay {
   position: fixed;
   inset: 0;
@@ -9,9 +12,10 @@
   justify-content: center;
   padding: 20px;
   overflow-y: auto;
+  animation: player-modal-fade-in 220ms ease-out both;
 }
 
-/* Área exterior que permite cerrar */
+/* Fondo oscuro clicable */
 .player-modal__backdrop {
   position: absolute;
   inset: 0;
@@ -23,7 +27,10 @@
   cursor: default;
 }
 
-/* Contenedor principal del modal */
+/* ======================================
+   VENTANA PRINCIPAL
+   ====================================== */
+
 .player-modal__dialog {
   position: relative;
   z-index: 1;
@@ -36,9 +43,18 @@
   background-color: #1c2533;
   color: #ffffff;
   box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+  animation: player-modal-enter 220ms ease-out both;
 }
 
-/* Encabezado */
+/* Evitar un contorno innecesario en el contenedor */
+.player-modal__dialog:focus {
+  outline: none;
+}
+
+/* ======================================
+   ENCABEZADO
+   ====================================== */
+
 .player-modal__header {
   display: flex;
   align-items: flex-start;
@@ -52,7 +68,6 @@
   );
 }
 
-/* Información del título */
 .player-modal__heading {
   min-width: 0;
 }
@@ -80,7 +95,7 @@
   line-height: 1.5;
 }
 
-/* Botón de cierre */
+/* Botón X */
 .player-modal__close {
   display: flex;
   align-items: center;
@@ -103,7 +118,10 @@
   background-color: #ffd274;
 }
 
-/* Contenido interior */
+/* ======================================
+   CONTENIDO INTERIOR
+   ====================================== */
+
 .player-modal__body {
   display: flex;
   flex-direction: column;
@@ -111,7 +129,7 @@
   padding: 25px;
 }
 
-/* Presentación del jugador */
+/* Identidad del jugador */
 .player-modal__identity {
   display: flex;
   align-items: center;
@@ -136,7 +154,6 @@
   font-weight: 700;
 }
 
-/* Nombre y club */
 .player-modal__identity-info {
   min-width: 0;
 }
@@ -172,7 +189,10 @@
   font-weight: 700;
 }
 
-/* Cuadrícula de información */
+/* ======================================
+   INFORMACIÓN GENERAL
+   ====================================== */
+
 .player-modal__details {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -202,7 +222,10 @@
   overflow-wrap: anywhere;
 }
 
-/* Estadísticas */
+/* ======================================
+   ESTADÍSTICAS DEL JUGADOR
+   ====================================== */
+
 .player-modal__stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -235,7 +258,7 @@
   font-size: 12px;
 }
 
-/* Estado del favorito */
+/* Estado de favorito */
 .player-modal__favorite-status {
   display: flex;
   align-items: center;
@@ -253,7 +276,10 @@
   font-size: 22px;
 }
 
-/* Pie de la ventana */
+/* ======================================
+   PIE DEL MODAL
+   ====================================== */
+
 .player-modal__footer {
   display: flex;
   justify-content: flex-end;
@@ -261,7 +287,6 @@
   border-top: 1px solid #3a4758;
 }
 
-/* Botón inferior */
 .player-modal__footer-button {
   min-width: 110px;
   padding: 11px 18px;
@@ -279,15 +304,77 @@
   background-color: #ffd274;
 }
 
-/* Accesibilidad básica de botones */
+/* Indicadores de foco para teclado */
 .player-modal__close:focus-visible,
-.player-modal__footer-button:focus-visible,
-.player-modal__backdrop:focus-visible {
-  outline: 2px solid #ffffff;
+.player-modal__footer-button:focus-visible {
+  outline: 3px solid #ffffff;
   outline-offset: 3px;
 }
 
-/* Adaptación a celulares */
+/* ======================================
+   ANIMACIONES DE APERTURA
+   ====================================== */
+
+@keyframes player-modal-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes player-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ======================================
+   ANIMACIONES DE CIERRE
+   ====================================== */
+
+.player-modal__overlay--closing {
+  animation: player-modal-fade-out 220ms ease-in both;
+}
+
+.player-modal__overlay--closing .player-modal__dialog {
+  animation: player-modal-exit 220ms ease-in both;
+}
+
+@keyframes player-modal-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes player-modal-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+
+/* ======================================
+   ADAPTACIÓN A CELULARES
+   ====================================== */
+
 @media (max-width: 600px) {
   .player-modal__overlay {
     padding: 12px;
@@ -340,3 +427,17 @@
     padding: 15px 18px;
   }
 }
+
+/* ======================================
+   ACCESIBILIDAD: MOVIMIENTO REDUCIDO
+   ====================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .player-modal__overlay,
+  .player-modal__dialog,
+  .player-modal__overlay--closing,
+  .player-modal__overlay--closing .player-modal__dialog {
+    animation: none;
+  }
+}
+npm.cmd run build
