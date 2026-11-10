@@ -16,7 +16,7 @@ El desarrollo se realizó de forma colaborativa mediante Git y GitHub, con commi
 ## 🔗 Enlaces
 
 - **Repositorio:** https://github.com/kevinncuervo/Examen-final
-- **Aplicación publicada:** pendiente del despliegue del Commit 24.
+- **Aplicación publicada:** https://bright-dusk-f4ee1b.netlify.app
 
 ## 🛠️ Tecnologías
 
@@ -222,16 +222,39 @@ Estas características **no equivalen por sí solas a una certificación WCAG**;
 - **Los favoritos no se conservan:** comprueba el almacenamiento local de `http://localhost:5173/` en las herramientas de desarrollador.
 - **Falla una prueba:** revisa la salida del comando correspondiente y corrige la causa antes de publicar cambios.
 
+
 ## 🌐 Publicación
 
-La publicación se realizará en el **Commit 24**, mediante Netlify. La configuración prevista es:
+El proyecto TOP CLUB SOCCER se encuentra publicado en Netlify.
 
-- **Rama de producción:** `master`.
+**Aplicación web:** https://bright-dusk-f4ee1b.netlify.app
+
+### Configuración de producción
+
+- **Proveedor:** Netlify.
+- **Repositorio:** kevinncuervo/Examen-final.
+- **Rama de producción:** master.
+- **Framework:** React + Vite.
 - **Comando de compilación:** `npm run build`.
 - **Directorio de publicación:** `dist`.
+- **Archivo de configuración:** `netlify.toml`.
 
-Una vez publicado, este README debe actualizarse con la **URL real de Netlify** y, si se desea, capturas del dashboard.
+### Despliegue automático
 
----
+El proyecto está vinculado con GitHub mediante Netlify.
 
-**Proyecto académico — Programación IV, Universidad de Manizales.**
+Los cambios publicados en la rama `master` generan
+nuevos despliegues automáticos, siempre que la
+compilación finalice correctamente.
+
+### Verificación
+
+La aplicación permite consultar jugadores,
+realizar búsquedas, visualizar estadísticas,
+ordenar registros, administrar favoritos,
+utilizar la paginación y cambiar el tema visual.
+
+También incorpora diseño responsive,
+una ventana modal de detalles y
+herramientas de accesibilidad.
+
