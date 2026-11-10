@@ -1,4 +1,5 @@
 
+import { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
 import SearchHistory from './SearchHistory';
 import StatsPanel from './StatsPanel';
@@ -7,6 +8,25 @@ import PlayerTable from './PlayerTable';
 import Pagination from './Pagination';
 import PlayerModal from './PlayerModal';
 import '../styles/dashboard.css';
+import '../styles/theme.css';
+
+// Clave para guardar el tema seleccionado
+const THEME_KEY = 'top-club-soccer-theme';
+
+// Recuperar el tema guardado en el navegador
+function loadTheme() {
+  try {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      return savedTheme;
+    }
+  } catch {
+    // Utilizar el tema predeterminado.
+  }
+
+  return 'dark';
+}
 
 function DashboardLayout({
   searchValue,
@@ -34,8 +54,38 @@ function DashboardLayout({
   selectedPlayer,
   onClosePlayerModal
 }) {
+  // Estado del tema actual
+  const [theme, setTheme] = useState(loadTheme);
+
+  // Determinar si está activo el tema oscuro
+  const darkMode = theme === 'dark';
+
+  // Aplicar el tema al documento y guardarlo
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      'data-theme',
+      theme
+    );
+
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {
+      // El cambio funciona durante la sesión,
+      // aunque localStorage esté deshabilitado.
+    }
+  }, [theme]);
+
+  // Cambiar entre tema claro y oscuro
+  const handleToggleTheme = () => {
+    setTheme((previousTheme) => (
+      previousTheme === 'dark'
+        ? 'light'
+        : 'dark'
+    ));
+  };
+
   return (
-    <div className="dashboard">
+    <div className={`dashboard dashboard--${theme}`}>
       <header className="dashboard__header">
         <div className="dashboard__branding">
           <h1 className="dashboard__brand">
@@ -55,9 +105,26 @@ function DashboardLayout({
         <button
           className="dashboard__theme-button"
           type="button"
-          disabled
+          onClick={handleToggleTheme}
+          aria-label={
+            darkMode
+              ? 'Activar tema claro'
+              : 'Activar tema oscuro'
+          }
+          title={
+            darkMode
+              ? 'Cambiar al tema claro'
+              : 'Cambiar al tema oscuro'
+          }
         >
-          Cambiar tema
+          <span
+            className="dashboard__theme-icon"
+            aria-hidden="true"
+          >
+            {darkMode ? '☀' : '☾'}
+          </span>
+
+          {darkMode ? 'Tema claro' : 'Tema oscuro'}
         </button>
       </header>
 
@@ -74,7 +141,7 @@ function DashboardLayout({
         <section className="dashboard__stats">
           <StatsPanel
             stats={stats}
-            darkMode={true}
+            darkMode={darkMode}
           />
         </section>
 
@@ -97,7 +164,7 @@ function DashboardLayout({
             players={players}
             onRowClick={onPlayerSelect}
             selectedPlayerId={selectedPlayerId}
-            darkMode={true}
+            darkMode={darkMode}
             sortConfig={sortConfig}
             onSort={onSort}
             rowColors={rowColors}
